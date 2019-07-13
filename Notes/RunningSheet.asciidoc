@@ -1,0 +1,832 @@
+// AI problem-solving with Unity and TensorFlow
+// ===========
+// Paris Buttfield-Addison <paris@secretlab.com.au>
+// v1.0, 20 June 2019
+
+= AI problem-solving with Unity ML-Agents
+
+Paris Buttfield-Addison, Tim Nugent, Mars Geldard
+
+image::images/idiotchild.jpg[]
+
+=== Unity Machine Learning Agents Toolkit
+The Unity Machine Machine Learning Agents Toolkit (ML-Agents) is an open-source suite of tools, including Unity plugins, Python scripts, and algorithm implementations, that enables the Unity environment to serve for both training and inference of intelligent agents.
+
+
+This document provides an outline of the material from the tutorial https://conferences.oreilly.com/oscon/oscon-or/public/schedule/detail/76096[AI problem-solving with Unity and TensorFlow] from OSCON 2019.
+
+It's not really intended to stand-alone, without readers having attended the conference, but it could still be useful!
+
+This document is sourced from, and accompanied by, the contents of this GitHub repository: https://github.com/parisba/OSCON2019-UnityML
+
+WARNING: This document isn't intended to explain why everything works the way it does. This document is here to help you keep your place with the tutorial content at OSCON. It's so you don't fall behind, and have something to refer to if you need to catch up. We recommend you keep your own notes about why things work the way they do.
+
+[[structure]]
+=== Structure
+
+We've structured this document, and the tutorial, as follows:
+
+. **<<approach,Our Approach>>**
++
+We outline our approach to teaching Unity and ML-Agents.
+
+. **<<anaconda-setup,Setting Up>>**
++
+Getting ready to explore Unity ML-Agents by setting up Unity, the Python environment, and ML-Agents itself.
+
+. **<<intro-to-unity,Activity 1: Introducing Unity>>**
++
+First, we'll introduce you to Unity, the game development environment that we'll be using to create simulations to perform machine learning with. 
++
+We'll spend a little time learning Unity, as a game developer would, so we're comfortable working with Unity for AI later on. There'll be no AI or ML in this section! 
+
+. **Activity 2**
++
+TBD
++
+Activity 2 is covered in <<Activity-Two>>.
+
+. **Activity 3**
++
+TBD
++
+
+Activity 3 is covered in <<Activity-Three>>.
+. **Activity 4**
++
+TBD
++
+
+Activity 4 is covered in <<Activity-Four>>.
+. **Next Steps**
++
+We'll conclude with some advice on where to take your learning next, some suggested activities, and some challenges for you to complete in your own time.
++
+This material is covered in <<next-steps>>.
+
+[[approach]]
+=== Approach
+
+This tutorial has the following goals:
+
+* Teach the very basics of the Unity game engine
+* Explore a scene setup in Unity for both training and use of a ML model
+* Show how to train a model with TensorFlow (and Docker) using the Unity scene
+* Discuss the use of the trained model and potential applications
+* Show you how to train AI agents in complicated scenarios and make the real world better by leveraging the virtual
+
+NOTE: We consider learning Unity to be as important as learning ML-Agents.
+
+This is exercise in **applied** artificial intelligence and machine learning. The focus of this session is to make you comfortable using Unity and ML-Agents, so you can go forth and use your software engineering skills and machine learning skills, together with your Unity and ML-Agents knowledge, to build interesting and useful simulations.
+
+If you haven't done much AI or ML in the past, don't worry! We'll explain everything you need, and it should be clear what you need to learn next to explore and understand the ML side more.
+
+Today is about building fun things in Unity, with ML-Agents!
+
+[[anaconda-setup]]
+=== Setting Up
+
+You need three major things to work with Unity ML-Agents:
+
+. <<installing-unity,Unity>>
+. <<installing-mlagents,Python and ML-Agents (and the associated Python dependencies)>>
+. <<getting-a-project,A Unity project that's set up to use ML-Agents>>
+
+In this section, we'll get those things installed!
+
+WARNING: Everything we're working with will work on Windows or macOS, and most of it will probably work with Linux.  We're not Linux experts, but we'll try our best to help you out with any problems you encounter if you're game enough to try this out on Linux.
+
+[[installing-unity]]
+==== Installing Unity
+Installing Unity is the easiest bit. We recommend downloading and using the official Unity Hub to manage your installs of Unity:
+
+* https://store.unity.com/download?ref=personal[Download the Unity Hub for Windows or macOS]
+
+The Unity Hub allows you to manage multiple installs of different versions of Unity, and lets you select which version of Unity you open and create projects with.
+
+WARNING: We've pinned the version of Unity being used for this tutorial to **Unity 2019.1.8f1**. Everything will probably work with a newer version, but we make no guarantees. It's easier for everyone if you stick to the verison we suggest! 
+
+If you don’t want to use the Unity Hub, you can download different versions of Unity for your platform manually:
+
+* https://unity3d.com/get-unity/download/archive[Download a specific version of Unity for Windows or macOS]
+
+We strongly recommend that you use the Unity Hub to manage your Unity installs, as it’s the easiest way to stick to a specific version of Windows, and manage your installs. It really makes things easier.
+
+If you like using command line tools, you can also try the https://github.com/DragonBox/u3d[U3d tool] to download and manage Unity install’s from the terminal.
+
+When you're installing Unity, you might be asked which Unity Modules you want to install as well. We recommend that you install the "Build Support" module for the platform you're running Unity on: for example, if you're installed Unity on macOS, then also install the "Mac Build Support (IL2CPP)" module. We also recommend that you install the "Documentation" module (for, hopefully, obvious reasons!)
+
+Once you've got Unity installed, move to to install the Unity Machine Learning Agents Toolkit.
+
+[[installing-mlagents]]
+==== Installing Python and ML-Agents
+
+
+
+. Make a new directory to keep everything in for this tutorial. Ours is called __UnityML_Workshop_Environment__.
+. Create a new Anaconda environment using Python 3.6. You can do this on the terminal with the following command:
++
+`conda create -n UnityML python=3.6`
+Note that you can replace the name of the Anaconda Environment with something of your choosing. Ours is called __UnityML__. Anaconda will take a moment to create an environment for you, as shown in <<fig:env_setup>>.
+
+[[fig:env_setup]]
+.Our Anaconda environment being created
+image::images/env_setup.png[]
+
+[start=3]
+. Once the Anaconda environment has been created, activate is using the following command:
++
+`conda activate UnityML`
+. Install TensorFlow 1.7.1 using pip, using the following command:
++
+`pip install tensorflow=1.7.1`
+. And finally (almost) install ML-Agents, using the following command:
++
+`pip install mlagents=0.8.2`
+. Once this is done, you can check that ML-Agents is installed successfully using the following command:
++
+`mlagents-learn --help`
+You should see an output including an ASCII Unity logo, as shown in <<fig:mlagentsinstalled>>.
+
+[[fig:mlagentsinstalled]]
+.Checking the ML-Agents is successfully installed
+image::images/mlagentsinstalled.png[]
+
+[[getting-a-project]]
+==== Acquiring a Unity Project
+
+At this point, you could manually create a project, set it up to use Unity ML-Agents, and then go get the bits of ML-Agents you need from GitHub, put them in the project, and start making ML environments.
+
+However, that's a bit of a chore, and we have a better solution! We've build a repository that contains everything you need for this session, and you can clone that instead:
+
+. Clone our GitHub repository to your machine:
++
+`git clone https://github.com/parisba/OSCON2019-UnityML.git`
++
+Inside the cloned repository, you'll find a copy of this running sheet (hello!) and a folder called "ml-agents". This is the folder we want to spend the majority of our time in.
+. Use your command line to change directory into this folder, and then activate your UnityML Anaconda Environment. 
++
+This __ml-agents__ directory contains the source code for ML-Agents, a whole of lot useful configuration files, as well starting point Unity projects for you to use. It's based on the default Unity project provided by Unity, but we've also added our examples for this session to it.
+
+You can find Unity's version of an ML-Agents repository on GitHub:
+
+* https://github.com/Unity-Technologies/ml-agents
+
+WARNING: We've pinned the version of ML-Agents being used for this tutorial to **ML-Agents Beta 0.8.2**. Everything will probably work with a newer version, but we make no guarantees. Using the same version of ML-Agents as us is probably more important than using the same version of Unity.
+
+To download the version of ML-Agents we're using, but without our additions to the Unity project, grab the following (we don't recommend doing this if you want to follow along):
+
+* https://github.com/Unity-Technologies/ml-agents/releases/tag/0.8.2
+
+NOTE: You can also clone the git repository, but we're focusing on **ML-Agents Beta 0.8.2**, and things might be a little different if you track the repository.
+
+Everything is ready!
+
+[[intro-to-unity]]
+=== Activity 1: Introducing Unity
+
+We're not here to learn game development with Unity! We're here to explore machine learning! But... to do that, we need to understand how to use Unity. We cannot emphasise this enough! **Being comfortable with Unity is as important as being comfortable with ML-Agents!**
+
+TIP: If you would like to learn Unity, check out our current books on Unity! _Mobile Game Development with Unity_ and _Unity Game Development Cookbook_ (shown in <<fig:unitycb,the image below>>)! We're very proud of our books. Here ends the shameless plug.
+
+[[fig:unitycb]]
+.Our Unity Game Development Cookbook
+image::images/unitycb.png[]
+
+Before we start, make sure you have **Unity 2019.1.8f1** installed, as shown in <<fig:unityversion>>.
+
+TIP: It's not the end of the world if you're running a slightly different version of Unity, just try to be as close to our version as possible.
+
+[[fig:unityversion]]
+.The version of Unity we’ll be using today
+image::images/unityversion.png[]
+
+==== Creating a bouncing ball
+
+Let's learn to find our way around Unity by building a simple 3D environment in Unity. This environment won't have any machine learning, or even be connected with the ML-Agents Toolkit. Let's get started:
+
+. Open the __Unity Hub__ application, and use the _New_ button on the _Projects_ screen to create a new Unity project. A templates and settings screen will display: select _3D_, name the project "SimpleEnvironment", and set the location to the directory we created for the workshop material <<anaconda-setup,earlier>>. It should resemble ours, shown in <<fig:projectsettings>>.
+
+[[fig:projectsettings]]
+.Creating a new Unity project
+image::images/projectsettings.png[]
+
+[start=2]
+. Your new Unity project will open, as shown in <<fig:emptyproject>>. Unity's default view is made up of some standard components:
+    
+    - The _Scene_ and _Game_ views in the middle. The _Scene_ is editable, and the _Game_ shows what environment looks like when running.
+    - The _Hierarchy_ on the left, which shows the contents of the current _Scene_.
+    - The _Console_ on the bottom left, which shows console output.
+    - The _Project_ view in the center bottom, which shows the contents of the project (this maps to the) contents of the _Assets_ directory in the project's overall directory.
+    - The _Inspector_ on the right, which shows the parameters and components of the currently selected object (selected in any of the _Hierarchy_, _Scene_, or _Project_ views).
+
+[[fig:emptyproject]]
+.Your empty Unity project
+image::images/emptyproject.png[]
+
+[start=3]
+. Add a sphere to the scene using the GameObject -> 3D Object -> Sphere menu entry (you can also right-click on the _Hierarchy_). Make sure the new sphere is selected in the _Hierarchy_, then use the _Inspector_ to rename it to "Bouncy Ball", as shown in <<fig:renamedsphere>>.
+
+[[fig:renamedsphere]]
+.Renaming the sphere
+image::images/renamedsphere.png[]
+
+[start=4]
+. Save the scene (it's already saved as SampleScene, so just make sure it's saved), and then play it by clicking the _Play Button_. Notice how absolutely nothing happens (other than Unity switching from the _Scene_ view to the _Game_ view). Click the _Play Button_ again to stop playing.
+
+[[fig:playscene]]
+.Playing the scene
+image::images/playscene.png[]
+
+[start=5]
+. To make things more interesting, we're going to make the sphere, which we've named bouncy ball, live up to its name. To bounce, we need something to bounce off of! We need a floor: add a cube using the GameObject -> 3D Object -> Cube menu.
+
+[[fig:tools]]
+.The Unity tools
+image::images/tools.png[]
+
+TIP: You can also switch between the tools using your keyboard: Q for the _Hand Tool_, W for the _Move Tool_, E for the _Rotate Tool_, R for the _Scale Tool_, as so on.
+
+[start=6]
+. Select the newly created cube, rename it to "Floor", then from the tools selector (shown in <<fig:tools>>) use the _Scale Tool_ (4th from the left) to stretch and flatten it, and the _Move Tool_ to move it below the sphere.
+
+[[fig:scenestatus]]
+.The scene coming together
+image::images/scenestatus.png[]
+
+[start=7]
+. Your scene should look something like <<fig:scenestatus>>. We need to add a _Rigidbody Component_ to the ball. Select the ball, and in the _Inspector_ click _Add Component_ and start typing "Rigidbody", as shown in <<fig:addingrigidbody>>. 
+
+[[fig:addingrigidbody]]
+.Adding a Rigidbody Component
+image::images/addingrigidbody.png[]
+
+[start=8]
+. Make sure the _Use Gravity_ checkbox is checked in the newly added _Rigidbody Component_ on the ball, as shown in <<fig:newrigidbody>>.
+
+[[fig:newrigidbody]]
+.The new Rigidbody Component
+image::images/newrigidbody.png[]
+
+. Play the scene! The ball will fall to the floor and... stop. To make it bounce we need to give it some physical properties that lead to bouncing. In the _Project_ view (center bottom), select the root "Assets" folder, and then right-click and select Create -> Physic Material, as shown in <<fig:creatingphysicmaterial>. Name the new material "Bouncy Material".
+
+[[fig:creatingphysicmaterial]]
+.Creating a new Physic Material
+image::images/creatingphysicmaterial.png[]
+
+[start=10]
+. Select the "Bouncy Material" and use the _Inspector_ to set the Bounciness to 1, and Bounce Combine to Maximum.
+. To make the ball bounce, we need to apply the new material to it: select the ball and then either drag the "Bouncy Material" onto it in the _Hierarchy_, or onto the "Material" slot in its "Sphere Collider" component in the _Inspector_, as shown in <<fig:settingmaterial>>.
+
+[[fig:settingmaterial]]
+.Setting the material
+image::images/settingmaterial.png[]
+
+[start=12]
+. Play the scene! The ball will now bounce. Isn't that exciting? Don't forget to stop playing when you're done watching the ball bounce. And don't forget to save the scene.
+
+==== Scripting the bouncing ball
+
+Let's look at basic Unity scripting now. Remember the console? We want it to print something everytime something hits the floor.
+
+. In the _Project_ view (center bottom), select the root "Assets" folder, and then right-click and select Create -> C# Script. Name the new script "CollisionDetection". Open the script and replace its contents with the following (leave the imports where they are):
++
+[source,csharp]
+----
+public class CollisionDetection : MonoBehaviour
+{
+    public bool printDebug = false;
+    
+    void OnCollisionEnter(Collision c) {
+        if(printDebug) {
+            Debug.Log(c.gameObject.name + " hit me!");
+        }
+    }
+
+}
+----
+. Drag the script from the _Project_ view onto the _Floor_ object in the _Hierarchy_, as shown in <<fig:scriptonfloor>>. 
+
+WARNING: The file name of the script must match the class name.
+
+[[fig:scriptonfloor]]
+.The CollisionDetection script attached to our floor object
+image::images/scriptonfloor.png[]
+
+. Play the game. While the game is playing, select the floor in the _Hierarchy_ and check the "Print Debug" checkbox in the new script's entry in the floor's _Inspector_. Now, every time the something (in this case, the ball) collides with the floor it will print out a message, as shown in <<fig:consoleoutput>>.
+
+[[fig:consoleoutput]]
+.Console output
+image::images/consoleoutput.png[]
+
+There's a lot more (a whole lot more) than you could learn about Unity, but that's everything we think you need to get into Unity for ML. We'll cover the rest as we go, or you can follow up and learn more about general Unity development in your own time!
+
+==== Extra Credit
+
+For fun, and if you have time, you might want to consider how you'd do the following:
+
+* add a camera to the ball, pointed at the floor, so we can see its perspective as it bounces. Make this camera the primary camera.
+* add more balls, set them at different heights, and name them differently, so we can watch them bounce
+* make a cube, and see if you can make it bounce
+
+// [[discussion-preparing-for-unity-ml]]
+// === Discussion X: Preparing for ML-Agents
+
+// TODO
+
+[[Activity-Two]]
+=== Activity 2: The Basics of ML-Agents
+
+Next up, we're going to look at a basic ML-Agents environment, to get the hang of how the components of ML-Agents and Unity work together, to feed into TensorFlow. In this Activity, we're going to:
+
+* Explore a basic ML-Agents environment
+* Learn how the Academy works
+* Learn how the Agent works
+* Learn how Brain(s) work
+* Learn how the Academy, Agent, and Brain work together
+* Understand how TensorFlow can be connected to the Unity and ML-Agents environment
+* Train the agent (briefly!)
+
+[[fig:basicml]]
+.A basic ML-Agents environment
+image::images/basicml.png[]
+
+Let's get going:
+
+. Open the _Unity Hub_ application, and use the _Add_ button on the _Projects_ screen to add the "UnitySDK" directory (located inside the "ml-agents" directory in the cloned or downloaded the ML-Agents project to earlier) as a project, as shown in <<fig:addingunitysdk>>.
+
+[[fig:addingunitysdk]]
+.Adding the ML-Agents UnitySDK folder as a project
+image::images/addingunitysdk.png[]
+
+[start=2]
+. Use the dropdown to select the version of Unity that we're using for the project (2019.1.8f1), as shown in <<fig:selectunityversion>>. Then, click on the project (named "UnitySDK") to open it, and confirm that you're OK to upgrade it to a newer version of Unity.
+
+[[fig:selectunityversion]]
+.Selecting the new Unity version
+image::images/selectunityversion.png[]
+
+[start=3]
+. The project might take a little bit of time to open, as it's quite large. Once it's open, use the _Project_ view (center bottom), browse to the "ML-Agents" -> "Examples" -> "Basic" -> "Scenes" folder, and open the "Basic" scene by double-clicking it. You'll see something that looks like <<fig:basicmlscene>>.
+
+[[fig:basicmlscene]]
+.The scene for the Basic ML-Agents example
+image::images/basicmlscene.png[]
+
+.The "Basic" Environment
+****
+The Basic environment that we've opened here is a linear movement task that involves an agent moving left or right towards a rewarding state. It's about as simple an example as possible, and we won't be dwelling on it for too long!
+
+The **Agent** in this environment is the blue cube.
+
+The **Goal** of the Agent is to move to the most rewarding state.
+
+The **Brain** (there is only one, linked to the Agent) has one **Vector Observation**, corresponding to its position on the spectrum of possible positions, and can take two **Discrete Vector Actions** (move left, or move right).
+
+The **Rewards** are _+0.1_ for arriving in any state that isn't optimal, and _+1.0_ for arriving in an optimal state.
+****
+
+[[fig:basicacademyinspector]]
+.The Inspector showing the Academy
+image::images/basicacademyinspector.png[]
+
+
+[start=4]
+. Click on the _Hierarchy_, and select the Academy GameObject. Now, look in the _Inspector_. You will see something that resembles <<fig:basicacademyinspector>>.
+. Expand "Training Configuration" and "Inference Configuration", and observe how during training the simulation is set to run faster, and at lower resolution than during inference. This is because we don't need to be able to see it during training.
+. Observe how the Academy knows about one Brain: The "BasicLearning" Brain, which is a Learning Brain.
+. Click on the brain in the Academy _Inspector_. The _Project_ view will show you where the file that's linked to the Brain slot on the Academy actually lives, as shown in <<fig:clickinglearningbrain>>.
+
+[[fig:clickinglearningbrain]]
+.Revealing the location of the brain
+image::images/clickinglearningbrain.png[]
+
+[[fig:basiclearning]]
+.The BasicLearning Brain
+image::images/basiclearning.png[]
+
+
+[start=8]
+. Click on the BasicLearning Brain in the _Project_ view, and then look at its _Inspector_, as shown in <<fig:basiclearning>>. You will see that it has as Vector Observation Space Size of 20, and Stacked Vectors is set to 1. 
++
+This means that the length of the vector observation(s) that this brain can receive is 20, and only 1 vector observation at a time will be used for decision making. The effective size of the vector observation being passed to the brain is Space Size x Stacked Vectors.
++
+You can also see that this brain is set to Discrete for its Vector Actions, with 1 branch (0), with 3 possible discrete actions (0,1,2). This agent actually only has 2 actions, but we want them to be 1 and 2, so we've set it to 3.
+. Open BasicAgent.cs (it's in the Scripts folder, inside the Basic Example) from the _Project_ view. Inside it, find the following code:
++
+[source,csharp]
+----
+    public override void CollectObservations()
+    {
+        AddVectorObs(position, 20);
+    }
+----
++ This function sends the observations made by the agent into the ML system. All this agent will know about is its current position, and the range.
+. Now look for the following code:
++
+[source,csharp]
+----
+public override void AgentAction(float[] vectorAction, string textAction)
+	{
+        var movement = (int)vectorAction[0];
+	    
+		int direction = 0;
+	    
+		switch (movement)
+		{
+		    case 1:
+		        direction = -1;
+		        break;
+		    case 2:
+		        direction = 1;
+		        break;
+		}
+
+	    position += direction;
+        if (position < minPosition) { position = minPosition; }
+        if (position > maxPosition) { position = maxPosition; }
+
+        gameObject.transform.position = new Vector3(position - 10f, 0f, 0f);
+
+        AddReward(-0.01f);
+
+        if (position == smallGoalPosition)
+        {
+            Done();
+            AddReward(0.1f);
+        }
+
+        if (position == largeGoalPosition)
+        {
+            Done();
+            AddReward(1f);
+        }
+    }
+----
++ This function processes the agent actions.
+. Make sure the Academy and the Agent both point to the BasicLearning Learning Brain, and that the BasicLearning brain points to a .nn file called BasicLearning (you'll find that in the TFModels folder).
+. Click the Play button! Watch the agent! Amazing!
+
+[[Activity-Three]]
+=== Activity 3: Self-driving car
+
+[[fig:selfdrivingcartrack]]
+.The track for our car
+image::images/selfdrivingcartrack.png[]
+
+
+* **Environment** ---- The Track
+* **Agent** ---- The Car
+* **Policy** ---- Convolutional Neural Network (as we're dealing with Images)
+
+// Good actions = rewards
+// Bad actions = penalties
+
+// Could look at anything: lap times, speed, driving without crashing
+// Maximise reward: max E[R|pi] (maximise expectation of reward R, given the policy Pi)
+
+We're going to take a brand new, empty brain and let it start learning from scratch. 
+
+TIP: We could also use some form of supervised learning, like imitation learning, and train that, then use reinforcement learning to improve it.
+
+// PPO at a conceptual level:
+// PPO is a policy gradient method which takes an EXISTING POLICY (e.g. a neural network) and optimises it, via GRADIENT ASCENT, to maximise reward.
+// At the beginning actions are chosen randomly, since the weights of the network are also random.
+// Later in the training, the policy reflects more rewarding actions, and the randomness decreases.
+// Exploratino reduces, and EXPLOITATION increases. This reduces CREATIVITY. And you might get the policy trapped in a local optimum situation.
+// max E[R|Pi]  (maximise expectation of reward R, given the policy Pi)
+// Expectation = average over a number of samples
+// We look for the POLICY GRADIENT
+
+// Defining the REWARD(S)
+// The agent will do everything possible to maximise the reward it receives, including cheating.
+// Rewards should not be too sparse. Too far away in time and space to be reached by random exploration. Often need to subdivide the task into small subtargets. Learn the basics first, and then improve on top of it. This is called HIERARCHICAL LEARNING (Curriculum Learning in Unity).
+
+
+We're going to start with something that's conceptually pretty straightforward: we want to build a simulated car that can autonomously drive around a track.
+
+* The **Environment** will be a race track.
+* The **Agent** will be a car.
+* The **Goal** will be the car autonomously driving around the track.
+* The **Actions** available will be steering left and right. The car's throttle will happen automatically.
+
+To make this happen, we need to answer some questions. Those questions are:
+
+* **Question 1**: What sort of learning to do we want to use?
+* **Question 2**: What Observations will the Agent have about the Environment?
+
+To answer **Question 1**, we'll take a look at two specific approaches: <<activity3.1,Reinforcement Learning>>, and <<activity3.2,Imitation Learning>>. We'll look at Reinforcement Learning in passing, showing off how it works, because it can take quite a long time to train. We'll look at Imitation Learning in more detail, because we can get things working quicker.
+
+To answer **Question 2**, we need to think about the knowledge the Agent needs in order to be able to drive the track. At the simplest level, it needs to know the following things:
+
+* whether it has left the road
+* where it is on the road, in relation to the sides of the road
+
+We can give it this knowledge in a variety of ways. The first, perhaps most obvious way if you approach this simulation from the perspective of a game developer, is to give it a whole bunch of raycasts ---- essentially perfect laser measuring tools ---- to see how far away it is from things, and send those raycasts out from a variety of directions on the car.
+
+The second, and perhaps most obvious way if you approach this from the perspective of a computer person or generally observant person, is to use cameras. 
+
+==== Setting up the Car as an Agent
+
+. Create a new C# Sharp in the Racer project. We named ours CarAgent.cs. Delete everything but the imports (the `using` statements).
+. Add `MLAgents` to the imports at the top:
++
+[source,csharp]
+----
+using MLAgents;
+----
+. Next, set our `namespace` to the `UnityStandardAssets.Vehicles.Car`, and create a `class` for the `CarAgent`, descending from `Agent` (as all Agents in ML-Agents do):
++
+[source,csharp]
+----
+namespace UnityStandardAssets.Vehicles.Car {
+	[RequireComponent(typeof(CarController))]
+	public class CarAgent : Agent {
+	
+	}
+----
+. Add some member variables inside the `class` (we'll explain what each is for in a moment):
++
+[source,csharp]
+----
+		private CarController carController;
+		private Rigidbody rigidBody;
+		
+		private float lapTime = 0;
+		private float bestLapTime = 0;
+		private bool isCollided = false;
+		private bool startLinePassed = false;
+		
+		public Transform resetPoint;
+		public Transform[] trackWaypoints = Transform[14];
+		
+		public bool agentIsTraining = false;
+----
++
+`carController` and `rigidBody` store references to bits of the car. `lapTime` will be used to store the current lap time, `bestLapTime` will store the best lap time of the current run (it's not persisting anything anywhere or anything).
++
+We will use `isCollided` by setting it to true when the car collides with something that it shouldn't (as far as what we want it to learn goes). `startLinePassed` will be used as a flag to figure out if we've lapped the course.
++
+`resetPoint` and `trackWaypoints` are `public`, which as you may remember means they get exposed in the _Inspector_. We'll use `resetPoint` to store a `Transform` representing the reset point for the car, and we'll use `trackWaypoints` to store an array of `Transform`s, representing a path around the track. We'll use those to reset the car back to nearby where it crashed (which, in this context, is colliding with something) by picking the closest one when a crash happens.
++ 
+`agentIsTraining` will be used (and exposed in the _Inspector_) to change the car's behaviour a little bit when we're training, vs when we're not. We could this by asking the ML-Agents system what its brain settings are, but we're doing it this way to make it clearer what's going on.
+. Next, we need an `Awake()` function:
++
+[source,csharp]
+----
+public void Awake() {
+	carController = GetComponent<CarController>();
+	rigidBody = GetComponent<Rigidbody>();
+}
+----
+. Next, we need to create an `AgentReset()` function, which is going to be a long one. We'll do a few things in this function:
++
+	- reset the car to the closest waypoint if we're in training (as defined by the `agentIsTraining` `bool` that we created)
+	- reset to the `resetPoint` (which we'll set to the beginning of the track) if we're not training
+	- and, regardless of the status of `agentIsTraining`, set the car's velocity to `0`, and set `isCollided` to `false` (because if we're resetting its position to a known good position----one of the waypoints, or the start position----then we know it's not colliding)
+. TODO add the code from `AgentReset()` here.
+. Next, we'll add a `FixedUpdate()` function, which is called every TODO, and use that to update the `lapTime`:
++
+[source,csharp]
+----
+void FixedUpdate() {
+	lapTime += Time.fixedDeltaTime;
+}
+----
+. TODO OnTriggerExit?
+. We'll also add a `CollectObservations()` function, which is where any Observations we want the car to have can be collected. We'll leave it empty right now:
++
+[source,csharp]
+----
+public override void CollectObservations() {
+	// observations might be collected here
+}
+----
+. Back in Unity, add the CarAgent.cs script to the Car. 
+. TODO setup the public vars in the inspector of the Car.
+
+==== Creating an Academy for the Car
+
+We don't need much in the Academy for the car, because TODO:
+
+. Create a new C# Script called CarAcademy.cs
+. Remove everything but the imports (the `using` statements), and add the following after the existing three:
++
+[source,csharp]
+----
+using MLAgents;
+----
+. And then add a `class`:
++
+[source,csharp]
+----
+public class CarAcademy : Academy {
+	// academy things go here
+}
+----
++
+We don't actually need to put anything in our academy!
+. Create an empty GameObject in the scene, and attach the CarAcademy.cs script to it. You should see something that looks like <<fig:caracademy>>.
+. TODO explain?
+
+TODO: fig:caracademy
+
+==== Letting the Car take Actions
+
+. An important part of allowing the car to behave as we described above is letting it know when it's collided with something that it shouldn't have. We'll add `bool` `isCollided` to the CarAgent.cs script, which we'll set when the car has collided with something bad. Add the following member variable to the `class` `CarAgent`:
++
+[source,csharp]
+----
+	private bool isCollided = false;
+----
+
+. To let the car take actions, we need to set up its `AgentAction()` funtion. Inside the CarAgent.cs file, find the `AgentAction()` function, and add the following:
++
+[source,csharp]
+----
+		float h = vectorAction[0];
+		carController.Move(h, 1, 0, 0);
+----
++
+This snippet of code creates a `float`, `h`, and stores the first component of the `vectorAction[0]` array in it. We then pass `h` into the `Move` function of our `carController`, which is TODO.
++
+We also send in `1`, to represent TODO, `0` for TODO, and `0` for todo. This is interesting we need to do control the car using `AgentAction()`. 
+. Next, we need to add a new function called `OnTriggerEnter()`, which is automatically called by Unity when the object the script is attached to collides with something (remember our bouncing ball, from earlier!) Create a new function (still in CarAgent.cs):
++
+[source,csharp]
+----
+private void OnTriggerEnter(Collider other) {
+	// we'll put some code here in a moment
+}
+----
+. Inside this function need set the `isCollided` `bool` that we created earlier to `true`, because if this function was called at all, then we are, in fact, collided! Add the following inside the new function:
++
+[source,csharp]
+----
+	isCollided = true;
+----
+
+ 
+[[activity3.1]]
+==== Activity 3.1: Car + Reinforcement Learning
+
+TODO (example, not a full activity)
+
+[[activity3.2]]
+==== Activity 3.2: Car + Imitation Learning
+
+TODO
+
+[[Activity-Four]]
+=== Activity 4: Building a robot warehouse
+
+For this activity we're going to build a robot warehouse. It'll look something like <<fig:robotwarehousefinished>>, and it's going to use reinforcement learning, without any imitation of a human involved at all.
+
+[[fig:robotwarehousefinished]]
+.Our robot warehouse
+image::images/robotwarehousefinished.png[]
+
+The steps we'll cover in this activity are:
+
+* Exploring the Robot Warehouse
+* Playing the Robot Warehouse
+* Adding Machine Learning to the Robot Warehouse
+* <<training-the-robot,Training the Robot>>
+
+.The "Robot Warehouse" Environment
+****
+TODO DESCRIPTION
+
+The **Agent** in this environment is the little robot.
+
+The **Goal** of the Agent is to push the cubes to the right corner of the warehouse.
+
+The **Brain** (there is only one, linked to the Agent) has one **Vector Observation**, corresponding to its position on the spectrum of possible positions, and can take two **Discrete Vector Actions** (move left, or move right).
+
+The **Rewards** are _+0.1_ for arriving in any state that isn't optimal, and _+1.0_ for arriving in an optimal state.
+****
+
+[[training-the-robot]]
+==== Training the robot
+
+. Create a Conda environment for the ML-Agents system to be installed in, as per the <<anaconda-setup,instructions earlier>>.
+. Once that's done, activate the environment, and change directories into the copy of Unity's ML-Agents that you downloaded. You should now be at a stage resembling <<fig:mlagentsdirectory>>.
+
+[[fig:mlagentsdirectory]]
+.The ML-Agents directory
+image::images/mlagentsdirectory.png[]
+
+[start=3]
+. Create a new file, ours is called oscon_trainer_config.yaml, and add the following:
++
+[source,yaml]
+----
+default:
+    trainer: ppo
+    batch_size: 1024
+    beta: 5.0e-3
+    buffer_size: 10240
+    epsilon: 0.2
+    gamma: 0.99
+    hidden_units: 128
+    lambd: 0.95
+    learning_rate: 3.0e-4
+    max_steps: 5.0e4
+    memory_size: 256
+    normalize: false
+    num_epoch: 3
+    num_layers: 2
+    time_horizon: 64
+    sequence_length: 64
+    summary_freq: 1000
+    use_recurrent: false
+    use_curiosity: false
+    curiosity_strength: 0.01
+    curiosity_enc_size: 128
+----
+. Next, below this, for our Robot Warehouse specifically, add:
++
+[source,yaml]
+----
+WarehouseOneCrate_Learning:
+    max_steps: 5.0e4
+    batch_size: 128
+    buffer_size: 2048
+    beta: 1.0e-2
+    hidden_units: 256
+    summary_freq: 2000
+    time_horizon: 64
+    num_layers: 2
+----
+Make sure you replace the "WarehouseOneCrate_Learning" with the name of your Brain, if you named it differently.
+. To start training, issue the following command:
++
+`mlagents-learn config/oscon_trainer_config.yaml --run-id=UnityML_OSCON1 --train`
++
+Make sure you increment the number of the run-ID, so we can keep track of what we're doing. When you execute this, you'll be asked to press play in Unity.
+
+[[activity5]]
+=== Activity 5: Bouncing Beepo (Reinforcement Learning)
+
+In this activity, we're going to take the warehouse buggy, "Beepo", and give him some treats. The only problem is the treats are up high in the air, and Beepo will need to bounce and jump to get them!
+
+To do this, we're going to use reinforcement learning, and some vector observations.
+
+. Create a BeepoBounceTreat.cs C# script:
++
+[source,csharp]
+----
+TODO
+----
++ 
+This is just a plain old `MonoBehaviour`. It makes the treat rotate like a powerup from a video game, it adds a `Respawn()` function that "respawns" the treat by making it move somewhere else, and it adds an `OnTriggerEnter()` function so we can detect when the treat collides with the agent (Beepo), and give Beepo a reward and then tell the treat to respawn (which moves it somewhere else, trapping Beepo in a perpetual cycle of treats).
+. Create a BeepoBounceAcademy.cs C# script:
++
+[source,csharp]
+----
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using MLAgents;
+
+public class BeepoBounceAcademy : Academy {
+
+    public float gravityMultiplier = 1f;
+
+    public override void InitializeAcademy()
+    {
+        Physics.gravity = new Vector3(0,-9.8f*gravityMultiplier,0);
+    }
+
+    public override void AcademyReset()
+    {
+
+
+    }
+
+    public override void AcademyStep()
+    {
+
+
+    }
+
+}
+----
++
+This Academy sets gravity to a multiplier that we can control on the academy, via the _Inspector_.
+. Next, create a BeepoBounceAgent.cs C# script:
++
+[source,csharp]
+----
+TODO
+----
++ TODO description
+
+[[next-steps]]
+=== Next Steps
+
+This is next steps section!
+ 
+ [[fig:IMG_4540]]
+image::images/IMG_4540.JPG[]
+ 
