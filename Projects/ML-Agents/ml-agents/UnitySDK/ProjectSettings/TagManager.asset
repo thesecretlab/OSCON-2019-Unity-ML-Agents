@@ -30,6 +30,10 @@ TagManager:
   - StartLine
   - treat
   - maze
+  - treatGood
+  - treatBad
+  - badTreat
+  - goodTreat
   layers:
   - Default
   - TransparentFX

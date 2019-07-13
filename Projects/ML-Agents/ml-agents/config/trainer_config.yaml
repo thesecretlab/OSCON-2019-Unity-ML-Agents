@@ -87,7 +87,7 @@ WarehouseOneCrate_Learning:
     time_horizon: 64
     num_layers: 2
 
-BananaLearning:
+TreatCollectorLearning:
     normalize: false
     batch_size: 1024
     beta: 5.0e-3

@@ -1,0 +1,131 @@
+=== Activity 2: The Basics of ML-Agents
+
+Next up, we're going to look at a basic ML-Agents environment, to get the hang of how the components of ML-Agents and Unity work together, to feed into TensorFlow. In this Activity, we're going to:
+
+* Explore a basic ML-Agents environment
+* Learn how the Academy works
+* Learn how the Agent works
+* Learn how Brain(s) work
+* Learn how the Academy, Agent, and Brain work together
+* Understand how TensorFlow can be connected to the Unity and ML-Agents environment
+* Train the agent (briefly!)
+
+[[fig:basicml]]
+.A basic ML-Agents environment
+image::images/basicml.png[]
+
+Let's get going:
+
+. Open the _Unity Hub_ application, and use the _Add_ button on the _Projects_ screen to add the "UnitySDK" directory (located inside the "ml-agents" directory in the cloned or downloaded the ML-Agents project to earlier) as a project, as shown in <<fig:addingunitysdk>>.
+
+[[fig:addingunitysdk]]
+.Adding the ML-Agents UnitySDK folder as a project
+image::images/addingunitysdk.png[]
+
+[start=2]
+. Use the dropdown to select the version of Unity that we're using for the project (2019.1.8f1), as shown in <<fig:selectunityversion>>. Then, click on the project (named "UnitySDK") to open it, and confirm that you're OK to upgrade it to a newer version of Unity.
+
+[[fig:selectunityversion]]
+.Selecting the new Unity version
+image::images/selectunityversion.png[]
+
+[start=3]
+. The project might take a little bit of time to open, as it's quite large. Once it's open, use the _Project_ view (center bottom), browse to the "ML-Agents" -> "Examples" -> "Basic" -> "Scenes" folder, and open the "Basic" scene by double-clicking it. You'll see something that looks like <<fig:basicmlscene>>.
+
+[[fig:basicmlscene]]
+.The scene for the Basic ML-Agents example
+image::images/basicmlscene.png[]
+
+.The "Basic" Environment
+****
+The Basic environment that we've opened here is a linear movement task that involves an agent moving left or right towards a rewarding state. It's about as simple an example as possible, and we won't be dwelling on it for too long!
+
+The **Agent** in this environment is the blue cube.
+
+The **Goal** of the Agent is to move to the most rewarding state.
+
+The **Brain** (there is only one, linked to the Agent) has one **Vector Observation**, corresponding to its position on the spectrum of possible positions, and can take two **Discrete Vector Actions** (move left, or move right).
+
+The **Rewards** are _+0.1_ for arriving in any state that isn't optimal, and _+1.0_ for arriving in an optimal state.
+****
+
+[[fig:basicacademyinspector]]
+.The Inspector showing the Academy
+image::images/basicacademyinspector.png[]
+
+
+[start=4]
+. Click on the _Hierarchy_, and select the Academy GameObject. Now, look in the _Inspector_. You will see something that resembles <<fig:basicacademyinspector>>.
+. Expand "Training Configuration" and "Inference Configuration", and observe how during training the simulation is set to run faster, and at lower resolution than during inference. This is because we don't need to be able to see it during training.
+. Observe how the Academy knows about one Brain: The "BasicLearning" Brain, which is a Learning Brain.
+. Click on the brain in the Academy _Inspector_. The _Project_ view will show you where the file that's linked to the Brain slot on the Academy actually lives, as shown in <<fig:clickinglearningbrain>>.
+
+[[fig:clickinglearningbrain]]
+.Revealing the location of the brain
+image::images/clickinglearningbrain.png[]
+
+[[fig:basiclearning]]
+.The BasicLearning Brain
+image::images/basiclearning.png[]
+
+
+[start=8]
+. Click on the BasicLearning Brain in the _Project_ view, and then look at its _Inspector_, as shown in <<fig:basiclearning>>. You will see that it has as Vector Observation Space Size of 20, and Stacked Vectors is set to 1. 
++
+This means that the length of the vector observation(s) that this brain can receive is 20, and only 1 vector observation at a time will be used for decision making. The effective size of the vector observation being passed to the brain is Space Size x Stacked Vectors.
++
+You can also see that this brain is set to Discrete for its Vector Actions, with 1 branch (0), with 3 possible discrete actions (0,1,2). This agent actually only has 2 actions, but we want them to be 1 and 2, so we've set it to 3.
+. Open BasicAgent.cs (it's in the Scripts folder, inside the Basic Example) from the _Project_ view. Inside it, find the following code:
++
+[source,csharp]
+----
+    public override void CollectObservations()
+    {
+        AddVectorObs(position, 20);
+    }
+----
++ This function sends the observations made by the agent into the ML system. All this agent will know about is its current position, and the range.
+. Now look for the following code:
++
+[source,csharp]
+----
+public override void AgentAction(float[] vectorAction, string textAction)
+	{
+        var movement = (int)vectorAction[0];
+	    
+		int direction = 0;
+	    
+		switch (movement)
+		{
+		    case 1:
+		        direction = -1;
+		        break;
+		    case 2:
+		        direction = 1;
+		        break;
+		}
+
+	    position += direction;
+        if (position < minPosition) { position = minPosition; }
+        if (position > maxPosition) { position = maxPosition; }
+
+        gameObject.transform.position = new Vector3(position - 10f, 0f, 0f);
+
+        AddReward(-0.01f);
+
+        if (position == smallGoalPosition)
+        {
+            Done();
+            AddReward(0.1f);
+        }
+
+        if (position == largeGoalPosition)
+        {
+            Done();
+            AddReward(1f);
+        }
+    }
+----
++ This function processes the agent actions.
+. Make sure the Academy and the Agent both point to the BasicLearning Learning Brain, and that the BasicLearning brain points to a .nn file called BasicLearning (you'll find that in the TFModels folder).
+. Click the Play button! Watch the agent! Amazing!

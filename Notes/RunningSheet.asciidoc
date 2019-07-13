@@ -12,7 +12,6 @@ image::images/idiotchild.jpg[]
 === Unity Machine Learning Agents Toolkit
 The Unity Machine Machine Learning Agents Toolkit (ML-Agents) is an open-source suite of tools, including Unity plugins, Python scripts, and algorithm implementations, that enables the Unity environment to serve for both training and inference of intelligent agents.
 
-
 This document provides an outline of the material from the tutorial https://conferences.oreilly.com/oscon/oscon-or/public/schedule/detail/76096[AI problem-solving with Unity and TensorFlow] from OSCON 2019.
 
 It's not really intended to stand-alone, without readers having attended the conference, but it could still be useful!
@@ -34,35 +33,31 @@ We outline our approach to teaching Unity and ML-Agents.
 +
 Getting ready to explore Unity ML-Agents by setting up Unity, the Python environment, and ML-Agents itself.
 
-. **<<intro-to-unity,Activity 1: Introducing Unity>>**
+. **<<Activity1,Activity 1: Introducing Unity>>**
 +
 First, we'll introduce you to Unity, the game development environment that we'll be using to create simulations to perform machine learning with. 
 +
 We'll spend a little time learning Unity, as a game developer would, so we're comfortable working with Unity for AI later on. There'll be no AI or ML in this section! 
 
-. **Activity 2**
+. **<<Activity2,Activity 2: Self-driving Car>>**
 +
-TBD
-+
-Activity 2 is covered in <<Activity-Two>>.
+In this activity, we'll look at training a car to drive around a track using both _reinforcement learning_ and _offline imitation learning_, and _visual observations_ (a camera).
 
-. **Activity 3**
+. **<<Activity3,Activity 3: Robot Warehouse>>**
 +
-TBD
-+
+Next, we'll build a little robot warehouse, with a cute little robot, and teach it to sort crates into the right corner of the warehouse. We'll use _reinforcement learning_ to do this, and _vector observations_.
 
-Activity 3 is covered in <<Activity-Three>>.
-. **Activity 4**
+. **<<Activity4,Activity 4: Bouncer>>**
 +
-TBD
-+
+For this activity, we'll use the cute little robot from the robot warehouse, and make him jump to collec treats. We'll look at both _reinforcement learning_ and _online imitation learning_, _vector observations_, and _on-demand decisions_.
 
-Activity 4 is covered in <<Activity-Four>>.
-. **Next Steps**
+. **<<Activity5,Activity 5: Treat Collector>>**
++
+Finally, we'll train an agent to collect good treats, and try to avoid bad treats. We'll use _reinforcement learning_, and _vector observations_.
+
+. **<<next-steps,Next Steps>>**
 +
 We'll conclude with some advice on where to take your learning next, some suggested activities, and some challenges for you to complete in your own time.
-+
-This material is covered in <<next-steps>>.
 
 [[approach]]
 === Approach
@@ -139,10 +134,10 @@ image::images/env_setup.png[]
 `conda activate UnityML`
 . Install TensorFlow 1.7.1 using pip, using the following command:
 +
-`pip install tensorflow=1.7.1`
+`pip install tensorflow==1.7.1`
 . And finally (almost) install ML-Agents, using the following command:
 +
-`pip install mlagents=0.8.2`
+`pip install mlagents==0.8.2`
 . Once this is done, you can check that ML-Agents is installed successfully using the following command:
 +
 `mlagents-learn --help`
@@ -182,7 +177,7 @@ NOTE: You can also clone the git repository, but we're focusing on **ML-Agents B
 
 Everything is ready!
 
-[[intro-to-unity]]
+[[Activity1]]
 === Activity 1: Introducing Unity
 
 We're not here to learn game development with Unity! We're here to explore machine learning! But... to do that, we need to understand how to use Unity. We cannot emphasise this enough! **Being comfortable with Unity is as important as being comfortable with ML-Agents!**
@@ -329,146 +324,8 @@ For fun, and if you have time, you might want to consider how you'd do the follo
 * add more balls, set them at different heights, and name them differently, so we can watch them bounce
 * make a cube, and see if you can make it bounce
 
-// [[discussion-preparing-for-unity-ml]]
-// === Discussion X: Preparing for ML-Agents
-
-// TODO
-
-[[Activity-Two]]
-=== Activity 2: The Basics of ML-Agents
-
-Next up, we're going to look at a basic ML-Agents environment, to get the hang of how the components of ML-Agents and Unity work together, to feed into TensorFlow. In this Activity, we're going to:
-
-* Explore a basic ML-Agents environment
-* Learn how the Academy works
-* Learn how the Agent works
-* Learn how Brain(s) work
-* Learn how the Academy, Agent, and Brain work together
-* Understand how TensorFlow can be connected to the Unity and ML-Agents environment
-* Train the agent (briefly!)
-
-[[fig:basicml]]
-.A basic ML-Agents environment
-image::images/basicml.png[]
-
-Let's get going:
-
-. Open the _Unity Hub_ application, and use the _Add_ button on the _Projects_ screen to add the "UnitySDK" directory (located inside the "ml-agents" directory in the cloned or downloaded the ML-Agents project to earlier) as a project, as shown in <<fig:addingunitysdk>>.
-
-[[fig:addingunitysdk]]
-.Adding the ML-Agents UnitySDK folder as a project
-image::images/addingunitysdk.png[]
-
-[start=2]
-. Use the dropdown to select the version of Unity that we're using for the project (2019.1.8f1), as shown in <<fig:selectunityversion>>. Then, click on the project (named "UnitySDK") to open it, and confirm that you're OK to upgrade it to a newer version of Unity.
-
-[[fig:selectunityversion]]
-.Selecting the new Unity version
-image::images/selectunityversion.png[]
-
-[start=3]
-. The project might take a little bit of time to open, as it's quite large. Once it's open, use the _Project_ view (center bottom), browse to the "ML-Agents" -> "Examples" -> "Basic" -> "Scenes" folder, and open the "Basic" scene by double-clicking it. You'll see something that looks like <<fig:basicmlscene>>.
-
-[[fig:basicmlscene]]
-.The scene for the Basic ML-Agents example
-image::images/basicmlscene.png[]
-
-.The "Basic" Environment
-****
-The Basic environment that we've opened here is a linear movement task that involves an agent moving left or right towards a rewarding state. It's about as simple an example as possible, and we won't be dwelling on it for too long!
-
-The **Agent** in this environment is the blue cube.
-
-The **Goal** of the Agent is to move to the most rewarding state.
-
-The **Brain** (there is only one, linked to the Agent) has one **Vector Observation**, corresponding to its position on the spectrum of possible positions, and can take two **Discrete Vector Actions** (move left, or move right).
-
-The **Rewards** are _+0.1_ for arriving in any state that isn't optimal, and _+1.0_ for arriving in an optimal state.
-****
-
-[[fig:basicacademyinspector]]
-.The Inspector showing the Academy
-image::images/basicacademyinspector.png[]
-
-
-[start=4]
-. Click on the _Hierarchy_, and select the Academy GameObject. Now, look in the _Inspector_. You will see something that resembles <<fig:basicacademyinspector>>.
-. Expand "Training Configuration" and "Inference Configuration", and observe how during training the simulation is set to run faster, and at lower resolution than during inference. This is because we don't need to be able to see it during training.
-. Observe how the Academy knows about one Brain: The "BasicLearning" Brain, which is a Learning Brain.
-. Click on the brain in the Academy _Inspector_. The _Project_ view will show you where the file that's linked to the Brain slot on the Academy actually lives, as shown in <<fig:clickinglearningbrain>>.
-
-[[fig:clickinglearningbrain]]
-.Revealing the location of the brain
-image::images/clickinglearningbrain.png[]
-
-[[fig:basiclearning]]
-.The BasicLearning Brain
-image::images/basiclearning.png[]
-
-
-[start=8]
-. Click on the BasicLearning Brain in the _Project_ view, and then look at its _Inspector_, as shown in <<fig:basiclearning>>. You will see that it has as Vector Observation Space Size of 20, and Stacked Vectors is set to 1. 
-+
-This means that the length of the vector observation(s) that this brain can receive is 20, and only 1 vector observation at a time will be used for decision making. The effective size of the vector observation being passed to the brain is Space Size x Stacked Vectors.
-+
-You can also see that this brain is set to Discrete for its Vector Actions, with 1 branch (0), with 3 possible discrete actions (0,1,2). This agent actually only has 2 actions, but we want them to be 1 and 2, so we've set it to 3.
-. Open BasicAgent.cs (it's in the Scripts folder, inside the Basic Example) from the _Project_ view. Inside it, find the following code:
-+
-[source,csharp]
-----
-    public override void CollectObservations()
-    {
-        AddVectorObs(position, 20);
-    }
-----
-+ This function sends the observations made by the agent into the ML system. All this agent will know about is its current position, and the range.
-. Now look for the following code:
-+
-[source,csharp]
-----
-public override void AgentAction(float[] vectorAction, string textAction)
-	{
-        var movement = (int)vectorAction[0];
-	    
-		int direction = 0;
-	    
-		switch (movement)
-		{
-		    case 1:
-		        direction = -1;
-		        break;
-		    case 2:
-		        direction = 1;
-		        break;
-		}
-
-	    position += direction;
-        if (position < minPosition) { position = minPosition; }
-        if (position > maxPosition) { position = maxPosition; }
-
-        gameObject.transform.position = new Vector3(position - 10f, 0f, 0f);
-
-        AddReward(-0.01f);
-
-        if (position == smallGoalPosition)
-        {
-            Done();
-            AddReward(0.1f);
-        }
-
-        if (position == largeGoalPosition)
-        {
-            Done();
-            AddReward(1f);
-        }
-    }
-----
-+ This function processes the agent actions.
-. Make sure the Academy and the Agent both point to the BasicLearning Learning Brain, and that the BasicLearning brain points to a .nn file called BasicLearning (you'll find that in the TFModels folder).
-. Click the Play button! Watch the agent! Amazing!
-
-[[Activity-Three]]
-=== Activity 3: Self-driving car
+[[Activity2]]
+=== Activity 2: Self-driving car
 
 [[fig:selfdrivingcartrack]]
 .The track for our car
@@ -502,7 +359,6 @@ TIP: We could also use some form of supervised learning, like imitation learning
 // The agent will do everything possible to maximise the reward it receives, including cheating.
 // Rewards should not be too sparse. Too far away in time and space to be reached by random exploration. Often need to subdivide the task into small subtargets. Learn the basics first, and then improve on top of it. This is called HIERARCHICAL LEARNING (Curriculum Learning in Unity).
 
-
 We're going to start with something that's conceptually pretty straightforward: we want to build a simulated car that can autonomously drive around a track.
 
 * The **Environment** will be a race track.
@@ -526,9 +382,18 @@ We can give it this knowledge in a variety of ways. The first, perhaps most obvi
 
 The second, and perhaps most obvious way if you approach this from the perspective of a computer person or generally observant person, is to use cameras. 
 
+We're going to use visual observations (which means cameras); we'll be using vector observations, which is the term for the other kind of observations, in the other activities.
+
 ==== Setting up the Car as an Agent
 
-. Create a new C# Sharp in the Racer project. We named ours CarAgent.cs. Delete everything but the imports (the `using` statements).
+. Expand "Activity2-SelfDrivingCar" in the _Project_ pane of Unity, as shown in <<fig:addnewtocar>>.
+
+[[fig:addnewtocar]]
+.Open Activity 2
+image::images/addnewtocar.png[]
+
+[start=2]
+. Create a new C# script in the Racer project. We named ours CarAgent.cs. Delete everything but the imports (the `using` statements).
 . Add `MLAgents` to the imports at the top:
 +
 [source,csharp]
@@ -584,8 +449,38 @@ public void Awake() {
 	- reset the car to the closest waypoint if we're in training (as defined by the `agentIsTraining` `bool` that we created)
 	- reset to the `resetPoint` (which we'll set to the beginning of the track) if we're not training
 	- and, regardless of the status of `agentIsTraining`, set the car's velocity to `0`, and set `isCollided` to `false` (because if we're resetting its position to a known good position----one of the waypoints, or the start position----then we know it's not colliding)
-. TODO add the code from `AgentReset()` here.
-. Next, we'll add a `FixedUpdate()` function, which is called every TODO, and use that to update the `lapTime`:
+. The `AgentReset()` code should be:
++
+[source,csharp]
+----
+        public override void AgentReset() {
+            // Reset to closest waypoint if we're training
+            if(agentIsTraining) {
+                float min_distance = 1e+6f;
+                int index = 0;
+                for(int i = 1; i < trackWaypoints.Length; i++) {
+                    float distance = Vector3.SqrMagnitude(trackWaypoints[i].position - transform.position);
+                    if(distance < min_distance) {
+                        min_distance = distance;
+                        index = i;
+                    }
+                }
+                transform.SetPositionAndRotation(trackWaypoints[index-1].position, new Quaternion(0,0,0,0));
+                transform.LookAt(trackWaypoints[index].position);
+            } else {
+                // Reset to beginning if we're NOT training
+                lapTime = 0;
+                transform.position = resetPoint.position;
+                transform.rotation = resetPoint.rotation;
+            }
+
+            // No matter whether we're training or not, we also need to:
+            rigidBody.velocity = Vector3.zero;
+            rigidBody.angularVelocity = Vector3.zero;
+            isCollided = false;
+        }
+----
+. Next, we'll add a `FixedUpdate()` function, which is called every physics update, and use that to update the `lapTime`:
 +
 [source,csharp]
 ----
@@ -593,7 +488,35 @@ void FixedUpdate() {
 	lapTime += Time.fixedDeltaTime;
 }
 ----
-. TODO OnTriggerExit?
+. Add an `OnTriggerEnter()`, which  we'll use to set `isCollided`, as well as work with the `lapTime`:
++
+[source,csharp]
+----
+        private void OnTriggerEnter(Collider other) {
+            // if we hit the start line...
+            if(other.CompareTag("StartLine")) {
+                if(!startLinePassed) {
+                    if (lapTime < bestLapTime) {
+                        bestLapTime = lapTime;
+                    }
+                    Debug.Log("Lap completed: " + lapTime);
+                    lapTime = 0;
+                    startLinePassed = true;
+                }
+            } else {
+                // we hit a wall...
+                isCollided = true;
+            }
+        }
+----
+. This will also need an `OnTriggerExit()`:
++
+[source,csharp]
+----
+        private void OnTriggerExit(Collider other) {
+            startLinePassed = false;
+        }
+----
 . We'll also add a `CollectObservations()` function, which is where any Observations we want the car to have can be collected. We'll leave it empty right now:
 +
 [source,csharp]
@@ -665,20 +588,34 @@ private void OnTriggerEnter(Collider other) {
 ----
 	isCollided = true;
 ----
+. Next, go back to `AgentAction()`, and at the end add:
++
+[source,csharp]
+----
+            // Once the actions are done, we need to check:
+            if(isCollided) {
+                // we hit something
+                AddReward(-1.0f); // you get a punishment, you get a punishment, we all get punishments!
+                Done();
+            } else {
+                // we did not hit something
+                AddReward(0.05f); // what a good car you are!
+            }
+----
 
  
-[[activity3.1]]
-==== Activity 3.1: Car + Reinforcement Learning
+[[Activity2.1]]
+==== Activity 2.1: Car + Reinforcement Learning
 
 TODO (example, not a full activity)
 
-[[activity3.2]]
-==== Activity 3.2: Car + Imitation Learning
+[[Activity2.2]]
+==== Activity 2.2: Car + Imitation Learning
 
 TODO
 
-[[Activity-Four]]
-=== Activity 4: Building a robot warehouse
+[[Activity3]]
+=== Activity 3: Building a robot warehouse
 
 For this activity we're going to build a robot warehouse. It'll look something like <<fig:robotwarehousefinished>>, and it's going to use reinforcement learning, without any imitation of a human involved at all.
 
@@ -705,6 +642,174 @@ The **Brain** (there is only one, linked to the Agent) has one **Vector Observat
 
 The **Rewards** are _+0.1_ for arriving in any state that isn't optimal, and _+1.0_ for arriving in an optimal state.
 ****
+
+. Expand the "Activity3-RobotWarehouse" folder in the _Project_ pane. Open the first scene (from the "Scenes" folder).
+. Open the BeepoAgent.cs script.
+. First, let's set up the `Awake()` function to configure things when the agent wakes up:
++
+[source,csharp]
+----
+   void Awake()
+    {
+        academy = FindObjectOfType<BeepoAcademy>(); //cache the academy
+
+        goals = area.GetComponentsInChildren<CrateDestination>();
+        blocks = area.GetComponentsInChildren<Crate>();
+
+        foreach (var goal in goals)
+        {
+            goal.SetColor(academy.FindGoalDefinition(goal.type).color);
+        }
+
+        foreach (var block in blocks)
+        {
+            block.SetColor(academy.FindGoalDefinition(block.type).color);
+        }
+    }
+----
+. Next, let's set up the `InitializeAgent()` function to do a little bit more setup:
++
+[source,csharp]
+----
+    public override void InitializeAgent()
+    {
+        base.InitializeAgent();
+
+        foreach (var block in blocks) {
+            block.agent = this;
+        }
+
+        agentRB = GetComponent<Rigidbody>();
+
+        rayPer = GetComponent<RayPerception>();
+
+        // Get the ground's bounds
+        areaBounds = ground.GetComponent<Collider>().bounds;
+        
+    }
+----
+. Now we need to do some work in `CollectObservations()`:
++
+[source,csharp]
+----
+   public override void CollectObservations()
+    {
+        if (useVectorObs)
+        {
+            var rayDistance = 12f;
+            float[] rayAngles = { 0f, 45f, 90f, 135f, 180f, 110f, 70f };
+            var detectableObjects = new[] { "crate", "goal", "wall" };
+            AddVectorObs(rayPer.Perceive(rayDistance, rayAngles, detectableObjects, 0f, 0f));
+            AddVectorObs(rayPer.Perceive(rayDistance, rayAngles, detectableObjects, 1.5f, 0f));
+        }
+    }
+----
+. Next, implement `IScoreAGoal()`:
++
+[source,csharp]
+----
+   public void IScoredAGoal(GameObject target, GameObject goal)
+    {
+        // We use a reward of 5.
+        AddReward(5f);
+        Debug.Log("Agent delivered package!");
+
+        var allGoalsComplete = true;
+        foreach (var block in blocks) {
+            if (block.IsActive == true) {
+                allGoalsComplete = false;
+            }
+        }
+
+        if (allGoalsComplete) {
+            // By marking an agent as done AgentReset() will be called automatically.
+        
+            Done();
+        }
+    }
+----
+. And `IHitWrongGoal()`:
++
+[source,csharp]
+----
+    public void IHitWrongGoal(GameObject target, GameObject goal)
+    {
+        // We use a reward of 5.
+        AddReward(-5f);
+    }
+----
+. And `MoveAgent()`:
++
+[source,csharp]
+----
+public void MoveAgent(float[] act)
+    {
+
+        Vector3 dirToGo = Vector3.zero;
+        Vector3 rotateDir = Vector3.zero;
+
+        int action = Mathf.FloorToInt(act[0]);
+
+        switch (action)
+        {
+            case 1:
+                dirToGo = transform.forward * 1f;
+                break;
+            case 2:
+                dirToGo = transform.forward * -1f;
+                break;
+            case 3:
+                rotateDir = transform.up * 1f;
+                break;
+            case 4:
+                rotateDir = transform.up * -1f;
+                break;
+            case 5:
+                dirToGo = transform.right * -0.75f;
+                break;
+            case 6:
+                dirToGo = transform.right * 0.75f;
+                break;
+        }
+        transform.Rotate(rotateDir, Time.fixedDeltaTime * 200f);
+
+        agentRB.AddForce(dirToGo * academy.agentRunSpeed,
+                         ForceMode.VelocityChange);
+
+    }
+----
+. And the closely related `AgentAction()`:
++
+[source,csharp]
+----
+public override void AgentAction(float[] vectorAction, string textAction)
+    {
+        // Move the agent using the action.
+        MoveAgent(vectorAction);
+
+        // Penalty given each step to encourage agent to finish task quickly.
+        AddReward(-1f / agentParameters.maxStep);
+    }
+----
+. And, finally, `AgentReset()`:
++
+[source,csharp]
+----
+public override void AgentReset()
+    {
+        int rotation = Random.Range(0, 4);
+        float rotationAngle = rotation * 90f;
+        area.transform.Rotate(new Vector3(0f, rotationAngle, 0f));
+
+        ResetBlocks();
+        transform.position = GetRandomSpawnPos();
+        agentRB.velocity = Vector3.zero;
+        agentRB.angularVelocity = Vector3.zero;
+
+        
+    }
+----
+
 
 [[training-the-robot]]
 ==== Training the robot
@@ -765,8 +870,9 @@ Make sure you replace the "WarehouseOneCrate_Learning" with the name of your Bra
 +
 Make sure you increment the number of the run-ID, so we can keep track of what we're doing. When you execute this, you'll be asked to press play in Unity.
 
-[[activity5]]
-=== Activity 5: Bouncing Beepo (Reinforcement Learning)
+[[Activity4]]
+=== Activity 5: Bouncer 
+//(Reinforcement Learning)
 
 In this activity, we're going to take the warehouse buggy, "Beepo", and give him some treats. The only problem is the treats are up high in the air, and Beepo will need to bounce and jump to get them!
 
@@ -821,6 +927,11 @@ This Academy sets gravity to a multiplier that we can control on the academy, vi
 TODO
 ----
 + TODO description
+
+[[Activity5]]
+=== Activity 5: Treat Collector
+
+TBD
 
 [[next-steps]]
 === Next Steps
