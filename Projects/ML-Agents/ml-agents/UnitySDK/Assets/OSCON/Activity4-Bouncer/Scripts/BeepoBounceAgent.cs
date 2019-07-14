@@ -22,35 +22,12 @@ public class BeepoBounceAgent: Agent
 
     public override void CollectObservations()
     {
-        AddVectorObs(gameObject.transform.localPosition);
-        
-        GameObject environment = gameObject.transform.parent.gameObject;
-        BeepoBounceTreat[] treats = environment.GetComponentsInChildren<BeepoBounceTreat>();
-
-        foreach (BeepoBounceTreat bb in treats)
-        {
-            Debug.Log("There's treats at: " + bb.transform.localPosition);
-            AddVectorObs(bb.transform.localPosition);
-        }
+        // add obs here
     }
 
     public override void AgentAction(float[] vectorAction, string textAction)
 	{
-	    for (int i = 0; i < vectorAction.Length; i++)
-	    {
-	        vectorAction[i] = Mathf.Clamp(vectorAction[i], -1f, 1f);
-	    }
-        float x = vectorAction[0];
-        float y = ScaleAction(vectorAction[1], 0, 1);
-        float z = vectorAction[2];
-        rb.AddForce( new Vector3(x, y+1, z) * strength);
-
-        AddReward(-0.05f * (
-            vectorAction[0] * vectorAction[0] +
-            vectorAction[1] * vectorAction[1] +
-            vectorAction[2] * vectorAction[2]) / 3f);
-
-        lookDir = new Vector3(x, y, z);
+        // add actions here
     }
 
     public override void AgentReset()
@@ -69,35 +46,7 @@ public class BeepoBounceAgent: Agent
 
     private void FixedUpdate()
     {
-        if (Physics.Raycast(transform.position, new Vector3(0f,-1f,0f), 0.51f) && jumpCooldown <= 0f)
-        {
-            RequestDecision();
-            jumpLeft -= 1;
-            jumpCooldown = 0.1f;
-            rb.velocity = default(Vector3);
-        }
-        
-        jumpCooldown -= Time.fixedDeltaTime;
-        
-        if (gameObject.transform.position.y < -1)
-        {
-            AddReward(-1);
-            Done();
-            return;
-        }
-        
-        if (gameObject.transform.localPosition.x < -19 || gameObject.transform.localPosition.x >19
-            || gameObject.transform.localPosition.z < -19 || gameObject.transform.localPosition.z > 19)
-        {
-            AddReward(-1);
-            Done();
-            return;
-        }
-
-        if (jumpLeft == 0)
-        {
-            Done();
-        }
+        // add fixed update
     }
 
     private void Update()

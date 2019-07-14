@@ -421,8 +421,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   broadcastHub:
     broadcastingBrains:
-    - {fileID: 11400000, guid: 5236b3306b7574b709951a1b3aa08866, type: 2}
-    - {fileID: 11400000, guid: 0b29bd226fc9a4e679231daa1d4fd10d, type: 2}
+    - {fileID: 11400000, guid: 573920e3a672d40038169c7ffdbdca05, type: 2}
+    - {fileID: 11400000, guid: 5527511df7b944e8e9177dd69db5a9c1, type: 2}
     _brainsToControl: []
   maxSteps: 0
   trainingConfiguration:
@@ -885,7 +885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f768b7cfb1804b058fea6e21bb238db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brain: {fileID: 11400000, guid: 5236b3306b7574b709951a1b3aa08866, type: 2}
+  brain: {fileID: 11400000, guid: 573920e3a672d40038169c7ffdbdca05, type: 2}
   agentParameters:
     agentCameras: []
     agentRenderTextures: []

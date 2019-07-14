@@ -156,9 +156,9 @@ However, that's a bit of a chore, and we have a better solution! We've build a r
 
 . Clone our GitHub repository to your machine:
 +
-`git clone https://github.com/parisba/OSCON2019-UnityML.git`
+`git clone https://github.com/thesecretlab/OSCON-2019-Unity-ML-Agents.git`
 +
-Inside the cloned repository, you'll find a copy of this running sheet (hello!) and a folder called "ml-agents". This is the folder we want to spend the majority of our time in.
+Inside the cloned repository, you'll find a copy of this running sheet (hello!) and a folder called "Projects". This is the folder we want to spend the majority of our time in.
 . Use your command line to change directory into this folder, and then activate your UnityML Anaconda Environment. 
 +
 This __ml-agents__ directory contains the source code for ML-Agents, a whole of lot useful configuration files, as well starting point Unity projects for you to use. It's based on the default Unity project provided by Unity, but we've also added our examples for this session to it.
@@ -169,7 +169,7 @@ You can find Unity's version of an ML-Agents repository on GitHub:
 
 WARNING: We've pinned the version of ML-Agents being used for this tutorial to **ML-Agents Beta 0.8.2**. Everything will probably work with a newer version, but we make no guarantees. Using the same version of ML-Agents as us is probably more important than using the same version of Unity.
 
-To download the version of ML-Agents we're using, but without our additions to the Unity project, grab the following (we don't recommend doing this if you want to follow along):
+To download the version of ML-Agents we're using, but without our additions to the Unity project, grab the following (we don't recommend doing this if you want to follow along, **use our repository instead**):
 
 * https://github.com/Unity-Technologies/ml-agents/releases/tag/0.8.2
 
@@ -526,11 +526,11 @@ public override void CollectObservations() {
 }
 ----
 . Back in Unity, add the CarAgent.cs script to the Car. 
-. TODO setup the public vars in the inspector of the Car.
+. Don't forget to set up the public variables in the Car Agent's _Inspector_ pane.
 
 ==== Creating an Academy for the Car
 
-We don't need much in the Academy for the car, because TODO:
+We don't need much in the Academy for the car, because the environment doesn't need any special setup:
 
 . Create a new C# Script called CarAcademy.cs
 . Remove everything but the imports (the `using` statements), and add the following after the existing three:
@@ -549,10 +549,7 @@ public class CarAcademy : Academy {
 ----
 +
 We don't actually need to put anything in our academy!
-. Create an empty GameObject in the scene, and attach the CarAcademy.cs script to it. You should see something that looks like <<fig:caracademy>>.
-. TODO explain?
-
-TODO: fig:caracademy
+. Create an empty GameObject in the scene, and attach the CarAcademy.cs script to it. 
 
 ==== Letting the Car take Actions
 
@@ -571,9 +568,9 @@ TODO: fig:caracademy
 		carController.Move(h, 1, 0, 0);
 ----
 +
-This snippet of code creates a `float`, `h`, and stores the first component of the `vectorAction[0]` array in it. We then pass `h` into the `Move` function of our `carController`, which is TODO.
+This snippet of code creates a `float`, `h`, and stores the first component of the `vectorAction[0]` array in it. We then pass `h` into the `Move` function of our `carController`.
 +
-We also send in `1`, to represent TODO, `0` for TODO, and `0` for todo. This is interesting we need to do control the car using `AgentAction()`. 
+We also send in `1`, `0`, and `0`. This is interesting we need to do control the car using `AgentAction()`. 
 . Next, we need to add a new function called `OnTriggerEnter()`, which is automatically called by Unity when the object the script is attached to collides with something (remember our bouncing ball, from earlier!) Create a new function (still in CarAgent.cs):
 +
 [source,csharp]
@@ -603,16 +600,7 @@ private void OnTriggerEnter(Collider other) {
             }
 ----
 
- 
-[[Activity2.1]]
-==== Activity 2.1: Car + Reinforcement Learning
-
-TODO (example, not a full activity)
-
-[[Activity2.2]]
-==== Activity 2.2: Car + Imitation Learning
-
-TODO
+We'll now look at training the car with **reinforcement learning** and **imitation learning**!
 
 [[Activity3]]
 === Activity 3: Building a robot warehouse
@@ -621,7 +609,7 @@ For this activity we're going to build a robot warehouse. It'll look something l
 
 [[fig:robotwarehousefinished]]
 .Our robot warehouse
-image::images/robotwarehousefinished.png[]
+image::images/robotwarehousefinished.png[] 
 
 The steps we'll cover in this activity are:
 
@@ -632,8 +620,6 @@ The steps we'll cover in this activity are:
 
 .The "Robot Warehouse" Environment
 ****
-TODO DESCRIPTION
-
 The **Agent** in this environment is the little robot.
 
 The **Goal** of the Agent is to push the cubes to the right corner of the warehouse.
@@ -898,7 +884,43 @@ To do this, we're going to use reinforcement learning, and some vector observati
 +
 [source,csharp]
 ----
-TODO
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using MLAgents;
+
+public class BeepoBounceTreat: MonoBehaviour
+{
+
+    // Update is called once per frame
+    void FixedUpdate ()
+    {
+        gameObject.transform.Rotate(new Vector3(1, 0, 0), 0.5f);
+    }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        Agent agent = collision.gameObject.GetComponent<Agent>();
+
+        if (agent != null)
+        {
+            agent.AddReward(1f);
+            Debug.Log("Treat acquired!");
+            Respawn();
+        }
+
+    }
+
+    public void Respawn()
+    {
+        gameObject.transform.localPosition = 
+            new Vector3(
+                (1 - 2 * Random.value) * 5f, 
+                2f+ Random.value * 5f, 
+                (1 - 2 * Random.value) * 5f);
+    }
+
+}
 ----
 + 
 This is just a plain old `MonoBehaviour`. It makes the treat rotate like a powerup from a video game, it adds a `Respawn()` function that "respawns" the treat by making it move somewhere else, and it adds an `OnTriggerEnter()` function so we can detect when the treat collides with the agent (Beepo), and give Beepo a reward and then tell the treat to respawn (which moves it somewhere else, trapping Beepo in a perpetual cycle of treats).
@@ -936,24 +958,113 @@ public class BeepoBounceAcademy : Academy {
 ----
 +
 This Academy sets gravity to a multiplier that we can control on the academy, via the _Inspector_.
-. Next, create a BeepoBounceAgent.cs C# script:
+. Next, create a BeepoBounceAgent.cs C# script. Add the following in the `CollectObservations()` method:  
 +
 [source,csharp]
 ----
-TODO
+    public override void CollectObservations()
+    {
+        AddVectorObs(gameObject.transform.localPosition);
+        
+        GameObject environment = gameObject.transform.parent.gameObject;
+        BeepoBounceTreat[] treats = environment.GetComponentsInChildren<BeepoBounceTreat>();
+
+        foreach (BeepoBounceTreat bb in treats)
+        {
+            Debug.Log("There's treats at: " + bb.transform.localPosition);
+            AddVectorObs(bb.transform.localPosition);
+        }
+    }
 ----
-+ TODO description
+. Next, add the following `AgentAction()`:
++
+[source,csharp]
+----
+    public override void AgentAction(float[] vectorAction, string textAction)
+	{
+	    for (int i = 0; i < vectorAction.Length; i++)
+	    {
+	        vectorAction[i] = Mathf.Clamp(vectorAction[i], -1f, 1f);
+	    }
+        float x = vectorAction[0];
+        float y = ScaleAction(vectorAction[1], 0, 1);
+        float z = vectorAction[2];
+        rb.AddForce( new Vector3(x, y+1, z) * strength);
+
+        AddReward(-0.05f * (
+            vectorAction[0] * vectorAction[0] +
+            vectorAction[1] * vectorAction[1] +
+            vectorAction[2] * vectorAction[2]) / 3f);
+
+        lookDir = new Vector3(x, y, z);
+    }
+----
+. And add a `FixedUpdate()`:
++
+[source,csharp]
+----
+    private void FixedUpdate()
+    {
+        if (Physics.Raycast(transform.position, new Vector3(0f,-1f,0f), 0.51f) && jumpCooldown <= 0f)
+        {
+            RequestDecision();
+            jumpLeft -= 1;
+            jumpCooldown = 0.1f;
+            rb.velocity = default(Vector3);
+        }
+        
+        jumpCooldown -= Time.fixedDeltaTime;
+        
+        if (gameObject.transform.position.y < -1)
+        {
+            AddReward(-1);
+            Done();
+            return;
+        }
+        
+        if (gameObject.transform.localPosition.x < -19 || gameObject.transform.localPosition.x >19
+            || gameObject.transform.localPosition.z < -19 || gameObject.transform.localPosition.z > 19)
+        {
+            AddReward(-1);
+            Done();
+            return;
+        }
+
+        if (jumpLeft == 0)
+        {
+            Done();
+        }
+    }
+----
+
+Next, train the agent!
+
+. Add the following to your config:
++
+[source,yaml]
+----
+BeepoBounceLearning:
+    normalize: true
+    max_steps: 5.0e5
+    num_layers: 2
+    hidden_units: 64
+----
+. And add a learning brain named BeepoBounceLearning with a space size of 12, 3 stacked vectors, continous Vecor Actions of 3 space size.
+. Turn on control on the Academy.
+. Run training:
++
+`mlagents-learn config/oscon_trainer_config.yaml --run-id=OSCON_Bouncer1 --train`
+. Copy the trained model in! Attach it to the brain, and see how you go!
 
 [[Activity5]]
 === Activity 5: Treat Collector
 
-TBD
+This one comes pre-made! We're just going to discuss it!
 
 [[next-steps]]
 === Next Steps
 
-This is next steps section!
- 
- [[fig:IMG_4540]]
-image::images/IMG_4540.JPG[]
- 
+Go further! Here's what we recommend trying next:
+
+* investigate Unity's curriculum learning, and try and build a curriculum
+* build a chameleon (it can be a cube) that can learn to change colour based on the environment it's sitting on
