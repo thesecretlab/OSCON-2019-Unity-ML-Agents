@@ -7,21 +7,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAgents;
 
-public enum GoalType {
+public enum GoalType
+{
     Goal1,
     Goal2,
 }
 
 [System.Serializable]
-public class GoalDefinition {
+public class GoalDefinition
+{
     public GoalType type;
     public Color color;
 }
 
-public class BeepoAcademy : Academy
+public class BeepoAcademy: Academy
 {
-
-
 	public float agentRunSpeed;
     public float agentRotationSpeed;
 
@@ -50,17 +50,19 @@ public class BeepoAcademy : Academy
     /// </summary>
 	public float gravityMultiplier;
 
+    public GoalDefinition[] goalDefinitions;
+    
     void State()
     {
         Physics.gravity *= gravityMultiplier;
-
     }
 
-    public GoalDefinition[] goalDefinitions;
-
-    public GoalDefinition FindGoalDefinition(GoalType type) {
-        foreach (var definition in goalDefinitions) {
-            if (definition.type == type) {
+    public GoalDefinition FindGoalDefinition(GoalType type)
+    {
+        foreach (var definition in goalDefinitions)
+        {
+            if (definition.type == type)
+            {
                 return definition;
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAgents;
 
-public class BeepoBounceAcademy : Academy {
+public class BeepoBounceAcademy: Academy {
 
     public float gravityMultiplier = 1f;
 
@@ -15,12 +15,10 @@ public class BeepoBounceAcademy : Academy {
     public override void AcademyReset()
     {
 
-
     }
 
     public override void AcademyStep()
     {
-
 
     }
 
