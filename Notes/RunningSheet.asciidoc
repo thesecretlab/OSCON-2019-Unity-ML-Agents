@@ -810,10 +810,15 @@ public override void AgentReset()
     }
 ----
 
-
 [[training-the-robot]]
 ==== Training the robot
 
+[[fig:learningbrainwarehouse]]
+.The warehouse brain
+image::images/learningbrainwarehouse.png[]
+
+. Create a new ML-Agents Learning Brain.
+. Name it "Warehouse_Learning_OneCrate", and give it a Vector Observation Space Size of 70, with 3 Stacked Vectors, no Visual Observations, Discrete Vector Actions, with 1 Vector Action Branch, with that branch being 7 large, and no Branch Descriptions, as shown in <<fig:learningbrainwarehouse>>.
 . Create a Conda environment for the ML-Agents system to be installed in, as per the <<anaconda-setup,instructions earlier>>.
 . Once that's done, activate the environment, and change directories into the copy of Unity's ML-Agents that you downloaded. You should now be at a stage resembling <<fig:mlagentsdirectory>>.
 
@@ -821,7 +826,7 @@ public override void AgentReset()
 .The ML-Agents directory
 image::images/mlagentsdirectory.png[]
 
-[start=3]
+[start=5]
 . Create a new file, ours is called oscon_trainer_config.yaml, and add the following:
 +
 [source,yaml]
@@ -853,7 +858,7 @@ default:
 +
 [source,yaml]
 ----
-WarehouseOneCrate_Learning:
+Warehouse_Learning_OneCrate:
     max_steps: 5.0e4
     batch_size: 128
     buffer_size: 2048
@@ -863,15 +868,26 @@ WarehouseOneCrate_Learning:
     time_horizon: 64
     num_layers: 2
 ----
-Make sure you replace the "WarehouseOneCrate_Learning" with the name of your Brain, if you named it differently.
+Make sure you replace the "Warehouse_Learning_OneCrate" with the name of your Brain, if you named it differently.
+. Point the Academy to the brain you made, and tick the control box. Set the Training Configuration to make it speedy!
 . To start training, issue the following command:
 +
 `mlagents-learn config/oscon_trainer_config.yaml --run-id=UnityML_OSCON1 --train`
 +
 Make sure you increment the number of the run-ID, so we can keep track of what we're doing. When you execute this, you'll be asked to press play in Unity.
+. Run the training:
++
+`mlagents-learn config/oscon_trainer_config.yaml --run-id=OSCON_Warehouse_OneCrate1 --train`
+. Move the trained .nn file into the project, turn off control in the Academy, and put the .nn file into the brain. Play!
+
+==== Extra Credit
+
+* Look at the four crate warehouse we supplied. Run it with the brain we made. Think about how you might improve it.
+* Implement visual observations instead of vector observations on either the one crate or four crate warehouse.
+* Implement imitation learning.
 
 [[Activity4]]
-=== Activity 5: Bouncer 
+=== Activity 4: Bouncer 
 //(Reinforcement Learning)
 
 In this activity, we're going to take the warehouse buggy, "Beepo", and give him some treats. The only problem is the treats are up high in the air, and Beepo will need to bounce and jump to get them!
