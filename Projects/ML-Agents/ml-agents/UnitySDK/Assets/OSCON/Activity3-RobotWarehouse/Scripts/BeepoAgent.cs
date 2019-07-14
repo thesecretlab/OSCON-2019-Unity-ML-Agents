@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAgents;
 
-public interface IPushAgent {
+public interface IPushAgent
+{
     void IScoredAGoal(GameObject crate, GameObject goal);
-
     void IHitWrongGoal(GameObject crate, GameObject goal);
 }
 
-public class BeepoAgent : Agent, IPushAgent
+public class BeepoAgent: Agent, IPushAgent
 {
     /// <summary>
     /// The ground. The bounds are used to spawn the elements.
@@ -37,7 +37,6 @@ public class BeepoAgent : Agent, IPushAgent
     /// The blocks to be pushed to the goals.
     /// </summary>
     private Crate[] blocks;
-
     
     private Rigidbody agentRB;
 
@@ -45,7 +44,7 @@ public class BeepoAgent : Agent, IPushAgent
 
     RayPerception rayPer;
 
-
+      // ============== ABOVE HERE SHOULD NOT NEED TO TOUCH =============
 
     void Awake()
     {
@@ -60,53 +59,6 @@ public class BeepoAgent : Agent, IPushAgent
     public override void CollectObservations()
     {
         // code for obs goes here
-    }
-
-    /// <summary>
-    /// Use the ground's bounds to pick a random spawn position.
-    /// </summary>
-    public Vector3 GetRandomSpawnPos()
-    {
-        bool foundNewSpawnLocation = false;
-        Vector3 randomSpawnPos = Vector3.zero;
-        while (foundNewSpawnLocation == false)
-        {
-            float randomPosX = Random.Range(-areaBounds.extents.x * academy.spawnAreaMarginMultiplier,
-                                areaBounds.extents.x * academy.spawnAreaMarginMultiplier);
-
-            float randomPosZ = Random.Range(-areaBounds.extents.z * academy.spawnAreaMarginMultiplier,
-                                            areaBounds.extents.z * academy.spawnAreaMarginMultiplier);
-            randomSpawnPos = ground.transform.position + new Vector3(randomPosX, 1f, randomPosZ);
-            if (Physics.CheckBox(randomSpawnPos, new Vector3(2.5f, 0.01f, 2.5f)) == false)
-            {
-                foundNewSpawnLocation = true;
-            }
-        }
-        return randomSpawnPos;
-    }
-
-    /// <summary>
-    /// Called when the agent moves the block into the goal.
-    /// </summary>
-    public void IScoredAGoal(GameObject target, GameObject goal)
-    {
-        // code for goal scoring goes here
-    }
-
-    public void IHitWrongGoal(GameObject target, GameObject goal)
-    {
-        // code for getting wrong goal goes here
-    }
-
-    /// <summary>
-    /// Swap ground material, wait time seconds, then swap back to the
-    /// regular material.
-    /// </summary>
-    IEnumerator ShowGoalAchievedAnimation(GameObject target, GameObject goal)
-    {
-        // TODO: replace this with new 'goal scored' effect
-        yield break;
-        
     }
 
     /// <summary>
@@ -126,11 +78,72 @@ public class BeepoAgent : Agent, IPushAgent
     }
 
     /// <summary>
+    /// Called when the agent moves the block into the goal.
+    /// </summary>
+    public void IScoredAGoal(GameObject target, GameObject goal)
+    {
+        // code for goal scoring goes here
+    }
+
+    public void IHitWrongGoal(GameObject target, GameObject goal)
+    {
+        // code for getting wrong goal goes here
+    }
+
+    /// <summary>
+    /// In the editor, if "Reset On Done" is checked then AgentReset() will
+    /// be called automatically anytime we mark done = true in an agent
+    /// script.
+    /// </summary>
+	public override void AgentReset()
+    {
+        // agent reset code goes here        
+    }
+
+    /// <summary>
+    /// Swap ground material, wait time seconds, then swap back to the
+    /// regular material.
+    /// </summary>
+    IEnumerator ShowGoalAchievedAnimation(GameObject target, GameObject goal)
+    {
+        // TODO: replace this with new 'goal scored' effect if you like
+        yield break;
+        
+    }
+
+    // ============== BELOW HERE SHOULD NOT NEED TO TOUCH =============
+
+    /// <summary>
+    /// Use the ground's bounds to pick a random spawn position.
+    /// </summary>
+    public Vector3 GetRandomSpawnPos()
+    {
+        Vector3 randomSpawnPos = Vector3.zero;
+
+        while (true) {
+            float randomPosX = Random.Range(-areaBounds.extents.x * academy.spawnAreaMarginMultiplier,
+                                areaBounds.extents.x * academy.spawnAreaMarginMultiplier);
+
+            float randomPosZ = Random.Range(-areaBounds.extents.z * academy.spawnAreaMarginMultiplier,
+                                            areaBounds.extents.z * academy.spawnAreaMarginMultiplier);
+
+            randomSpawnPos = ground.transform.position + new Vector3(randomPosX, 1f, randomPosZ);
+
+            if (Physics.CheckBox(randomSpawnPos, new Vector3(2.5f, 0.01f, 2.5f)) == false)
+            {
+                break;
+            }
+        }
+
+        return randomSpawnPos;
+    }
+
+    /// <summary>
     /// Resets the block position and velocities.
     /// </summary>
-    void ResetBlocks()
-    {
-        foreach (var block in blocks) {
+    void ResetBlocks() {
+        foreach (var block in blocks)
+        {
             // Get a random position for the block.
             block.transform.position = GetRandomSpawnPos();
 
@@ -144,16 +157,5 @@ public class BeepoAgent : Agent, IPushAgent
 
             block.Reset();
         }
-    }
-
-
-    /// <summary>
-    /// In the editor, if "Reset On Done" is checked then AgentReset() will
-    /// be called automatically anytime we mark done = true in an agent
-    /// script.
-    /// </summary>
-	public override void AgentReset()
-    {
-        // agent reset code goes here        
     }
 }

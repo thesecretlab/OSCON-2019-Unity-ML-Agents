@@ -5,16 +5,12 @@
 
 using UnityEngine;
 
-public class Crate : MonoBehaviour
+public class Crate: MonoBehaviour
 {
 
     public GoalType type;
 
     public MeshRenderer innerCubeRenderer;
-
-    public void SetColor(Color color) {
-        innerCubeRenderer.material.color = color;
-    }
 
     [HideInInspector]
     /// <summary>
@@ -24,42 +20,17 @@ public class Crate : MonoBehaviour
     /// </summary>
 	public IPushAgent agent;  //
 
-    void OnTriggerEnter(Collider col)
+    public bool IsActive
     {
-        // Touched goal.
-        if (col.gameObject.CompareTag("goal"))
+        get
         {
-            // Get the goal component from the thing we touched
-            var goal = col.gameObject.GetComponent<CrateDestination>();
-
-            if (goal == null) {
-                Debug.LogWarning("Touched a goal, but it has no CrateDestination component");
-                return;
-            }
-
-            // if (goal.type != this.type) {
-            //     Debug.LogWarning("Touched a goal, but it's the wrong type for the current crate.");
-            //     agent.IHitWrongGoal(gameObject, col.gameObject);
-            // }
-
-            if (goal.type == this.type) {
-
-                IsActive = false;
-
-                // Tell the agent that this block touched this goal.
-                agent.IScoredAGoal(gameObject, col.gameObject);
-                
-            }
-            
-        }
-    }
-
-    public bool IsActive {
-        get {
             return gameObject.activeInHierarchy;
         }
-        set {
-            if (value) {
+
+        set
+        {
+            if (value)
+            {
                 // Move back to the default layer so we can be "seen"
                 gameObject.layer = LayerMask.NameToLayer("Default");
                 gameObject.SetActive(true);
@@ -74,7 +45,43 @@ public class Crate : MonoBehaviour
         }
     }
 
-    public void Reset() {
+    public void Reset()
+    {
         IsActive = true;
+    }
+
+    public void SetColor(Color color)
+    {
+        innerCubeRenderer.material.color = color;
+    }
+
+    void OnTriggerEnter(Collider col)
+    {
+        // Touched goal.
+        if (col.gameObject.CompareTag("goal"))
+        {
+            // Get the goal component from the thing we touched
+            var goal = col.gameObject.GetComponent<CrateDestination>();
+
+            if (goal == null)
+            {
+                Debug.LogWarning("Touched a goal, but it has no CrateDestination component");
+                return;
+            }
+
+            // if (goal.type != this.type) {
+            //     Debug.LogWarning("Touched a goal, but it's the wrong type for the current crate.");
+            //     agent.IHitWrongGoal(gameObject, col.gameObject);
+            // }
+
+            if (goal.type == this.type)
+            {
+                IsActive = false;
+
+                // Tell the agent that this block touched this goal.
+                agent.IScoredAGoal(gameObject, col.gameObject);
+            }
+            
+        }
     }
 }

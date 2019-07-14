@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAgents;
 
-public class BeepoBounceAgent : Agent {
-
+public class BeepoBounceAgent: Agent 
+{
     [Header("Bouncer Specific")]
     public GameObject bodyObject;
     Rigidbody rb;
@@ -23,7 +23,7 @@ public class BeepoBounceAgent : Agent {
     public override void CollectObservations()
     {
         AddVectorObs(gameObject.transform.localPosition);
-
+        
         GameObject environment = gameObject.transform.parent.gameObject;
         BeepoBounceTreat[] treats = environment.GetComponentsInChildren<BeepoBounceTreat>();
 
@@ -55,7 +55,6 @@ public class BeepoBounceAgent : Agent {
 
     public override void AgentReset()
     {
-
         gameObject.transform.localPosition = new Vector3(
             (1   - 2 * Random.value) *5, 2, (1 - 2 * Random.value)*5);
         rb.velocity = default(Vector3);
@@ -94,11 +93,11 @@ public class BeepoBounceAgent : Agent {
             Done();
             return;
         }
+
         if (jumpLeft == 0)
         {
             Done();
         }
-
     }
 
     private void Update()
