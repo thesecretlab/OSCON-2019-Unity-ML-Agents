@@ -700,8 +700,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   broadcastHub:
     broadcastingBrains:
-    - {fileID: 11400000, guid: e9cec44f8ef6747f6bbabe2bddc8b1dd, type: 2}
-    - {fileID: 11400000, guid: 40f524698856f47e3806e149ea9299b3, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
     _brainsToControl:
     - {fileID: 11400000, guid: e8b2d719f6a324b1abb68d8cf2859f5c, type: 2}
   maxSteps: 0
