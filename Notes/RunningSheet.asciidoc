@@ -1165,7 +1165,7 @@ Common Problems:
     - If using a Learning Brain for Training, the Brain file MUST have its Model slot EMPTY.
 * When training, a configuration yaml file MUST have the name of the brain you want to train in it. We provide yaml parameters for all brains we'll be using. Imitation Learning uses "offline_bc" config file, everything else uses the default config file. Parameters for training start with the default set and then spill into any specific ones provided (named by the brain).
     - Example default set:
-    +
+
     [source,yaml]
     ----
     default:
@@ -1191,9 +1191,10 @@ Common Problems:
         curiosity_strength: 0.01
         curiosity_enc_size: 128
     ----
+
     - Example set (put below the default set):
-    +
-    [source,csharp]
+
+    [source,yaml]
     ----
     WarehouseOneCrate_Learning_IL:
         max_steps: 5.0e4
@@ -1205,5 +1206,6 @@ Common Problems:
         time_horizon: 64
         num_layers: 2   
     ----
+
     - If a brain called "WarehouseOneCrate_Learning_IL" was training, it would get its parameters from both of the above sets.
 
