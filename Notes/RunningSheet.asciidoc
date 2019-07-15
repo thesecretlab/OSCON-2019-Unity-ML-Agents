@@ -602,6 +602,88 @@ private void OnTriggerEnter(Collider other) {
 
 We'll now look at training the car with **reinforcement learning** and **imitation learning**!
 
+To train the car with **reinforcement learning**, you'll need a yaml file in the config directory (PROJECT/Projects/ML-Agents/ml-agents/config), named something like OSCON-RL-Car.yaml, with the following in it:
++
+[source,yaml]
+----
+default:
+    trainer: ppo
+    batch_size: 1024
+    beta: 5.0e-3
+    buffer_size: 10240
+    epsilon: 0.2
+    gamma: 0.99
+    hidden_units: 128
+    lambd: 0.95
+    learning_rate: 3.0e-4
+    max_steps: 5.0e4
+    memory_size: 256
+    normalize: false
+    num_epoch: 3
+    num_layers: 2
+    time_horizon: 64
+    sequence_length: 64
+    summary_freq: 1000
+    use_recurrent: false
+    use_curiosity: false
+    curiosity_strength: 0.01
+    curiosity_enc_size: 128
+    
+OSCONCar_RL_LearningBrain:
+    max_steps: 1.0e6
+    batch_size: 100
+    beta: 0.001
+    buffer_size: 12000
+    gamma: 0.995
+    lambd: 0.99
+    learning_rate: 0.0003
+    normalize: true
+    time_horizon: 1000
+----
++
+Your learning brain will need to be named the same as the second set of parameters (in this case, "OSCONCar_RL_LearningBrain"). 
+
+TIP: Don't forget to set the parameters of the brain and academy in Unity for training! You'll want the control checkbox checked next to the learning brain, any existing models detached from the brain, and you probably want the speed and quality of the simulation turned down.
+
+To train the reinforcement learning brain, the following command will be used:
++
+`mlagents-learn config/OSCON-RL-Car.yaml --run-id=OSCONCarRL1 --train`
++
+We recommend incrementing the run-id parameter if you change something significant. You can also resume training on a run that was used before (adding more information to the neural net), by adding `--load` to the end of the above command. That will resume the named run-id.
+
+To train the car with **imitation learning**, you'll need a yaml file in the config directory (PROJECT/Projects/ML-Agents/ml-agents/config), named something like OSCON-IL-Car.yaml, with the following in it:
++
+[source,yaml]
+----
+default:
+    trainer: offline_bc
+    batch_size: 64
+    summary_freq: 1000
+    max_steps: 5.0e4
+    batches_per_epoch: 10
+    use_recurrent: false
+    hidden_units: 128
+    learning_rate: 3.0e-4
+    num_layers: 2
+    sequence_length: 32
+    memory_size: 256
+    demo_path: ./UnitySDK/Assets/Demonstrations/PATH-TO-DEMO.demo
+----
++
+You'll need to relace the .demo file in the parameters with one you want to use, as recorded in the Unity environment. To record a demo:
+
+* Add the "BC Recording Helper" and "Demonstration Recorder" components to your Agent and assign a name.
+* Play the game with a Player Brain attached to the Agent (and the Academy).
+* Drive the car! 
+* We recommend driving for about 100 seconds. Once you're done driving, remove the components we added a moment ago.
+* You can now point the config yaml file to the .demo file you just made.
+
+To train the imitation learning brain, the following command will be used:
++
+`mlagents-learn config/OSCON-IL-Car.yaml --run-id=OSCONCarIL1 --train`
++
+We recommend incrementing the run-id parameter if you change something significant. You can also resume training on a run that was used before (adding more information to the neural net), by adding `--load` to the end of the above command. That will resume the named run-id.
+
 [[Activity3]]
 === Activity 3: Building a robot warehouse
 
@@ -813,7 +895,7 @@ image::images/learningbrainwarehouse.png[]
 image::images/mlagentsdirectory.png[]
 
 [start=5]
-. Create a new file, ours is called oscon_trainer_config.yaml, and add the following:
+. Create a new config file, ours is called oscon_robot_trainer_config.yaml, and add the following:
 +
 [source,yaml]
 ----
@@ -1068,3 +1150,60 @@ Go further! Here's what we recommend trying next:
 
 * investigate Unity's curriculum learning, and try and build a curriculum
 * build a chameleon (it can be a cube) that can learn to change colour based on the environment it's sitting on
+* build a car that drives using ray perception, instead of a camera
+
+=== Problem Solving Notes
+
+Common Problems:
+
+* Not connecting the brains right for training and/or inference:
+    - they need an Academy game object, with an script inhering from Academy on it (it's often otherwise empty)
+    - the Academy needs to know about the brain they want to work with at the time (e.g. if playing or showing/teaching, a Player Brain, or if Learning or Inferring, a Learning Brain)
+    - "Control" checkbox next to Learning Brain needs to be checked if training with TensorFlow (Control checkbox activates external communicator to TensorFlow)
+    - Any brain in use also needs to be in the Brain slot of the AGENT(s).
+    - If they're using a Learning Brain for Inference, the Brain file (which sits in a slot on the Academy AND on the Agent(s))) needs to point to a TFModel in its model slot.
+    - If using a Learning Brain for Training, the Brain file MUST have its Model slot EMPTY.
+* When training, a configuration yaml file MUST have the name of the brain you want to train in it. We provide yaml parameters for all brains we'll be using. Imitation Learning uses "offline_bc" config file, everything else uses the default config file. Parameters for training start with the default set and then spill into any specific ones provided (named by the brain).
+    - Example default set:
+    +
+    [source,yaml]
+    ----
+    default:
+        trainer: ppo
+        batch_size: 1024
+        beta: 5.0e-3
+        buffer_size: 10240
+        epsilon: 0.2
+        gamma: 0.99
+        hidden_units: 128
+        lambd: 0.95
+        learning_rate: 3.0e-4
+        max_steps: 5.0e4
+        memory_size: 256
+        normalize: false
+        num_epoch: 3
+        num_layers: 2
+        time_horizon: 64
+        sequence_length: 64
+        summary_freq: 1000
+        use_recurrent: false
+        use_curiosity: false
+        curiosity_strength: 0.01
+        curiosity_enc_size: 128
+    ----
+    - Example set (put below the default set):
+    +
+    [source,csharp]
+    ----
+    WarehouseOneCrate_Learning_IL:
+        max_steps: 5.0e4
+        batch_size: 128
+        buffer_size: 2048
+        beta: 1.0e-2
+        hidden_units: 256
+        summary_freq: 2000
+        time_horizon: 64
+        num_layers: 2   
+    ----
+    - If a brain called "WarehouseOneCrate_Learning_IL" was training, it would get its parameters from both of the above sets.
+
