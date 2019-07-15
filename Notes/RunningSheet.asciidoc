@@ -1189,46 +1189,46 @@ Common Problems:
 * When training, a configuration yaml file MUST have the name of the brain you want to train in it. We provide yaml parameters for all brains we'll be using. Imitation Learning uses "offline_bc" config file, everything else uses the default config file. Parameters for training start with the default set and then spill into any specific ones provided (named by the brain).
     - Example default set:
 
-    [source,yaml]
-    ----
-    default:
-        trainer: ppo
-        batch_size: 1024
-        beta: 5.0e-3
-        buffer_size: 10240
-        epsilon: 0.2
-        gamma: 0.99
-        hidden_units: 128
-        lambd: 0.95
-        learning_rate: 3.0e-4
-        max_steps: 5.0e4
-        memory_size: 256
-        normalize: false
-        num_epoch: 3
-        num_layers: 2
-        time_horizon: 64
-        sequence_length: 64
-        summary_freq: 1000
-        use_recurrent: false
-        use_curiosity: false
-        curiosity_strength: 0.01
-        curiosity_enc_size: 128
-    ----
+[source,yaml]
+----
+default:
+    trainer: ppo
+    batch_size: 1024
+    beta: 5.0e-3
+    buffer_size: 10240
+    epsilon: 0.2
+    gamma: 0.99
+    hidden_units: 128
+    lambd: 0.95
+    learning_rate: 3.0e-4
+    max_steps: 5.0e4
+    memory_size: 256
+    normalize: false
+    num_epoch: 3
+    num_layers: 2
+    time_horizon: 64
+    sequence_length: 64
+    summary_freq: 1000
+    use_recurrent: false
+    use_curiosity: false
+    curiosity_strength: 0.01
+    curiosity_enc_size: 128
+----
 
     - Example set (put below the default set):
 
-    [source,yaml]
-    ----
-    WarehouseOneCrate_Learning_IL:
-        max_steps: 5.0e4
-        batch_size: 128
-        buffer_size: 2048
-        beta: 1.0e-2
-        hidden_units: 256
-        summary_freq: 2000
-        time_horizon: 64
-        num_layers: 2   
-    ----
+[source,yaml]
+----
+WarehouseOneCrate_Learning_IL:
+    max_steps: 5.0e4
+    batch_size: 128
+    buffer_size: 2048
+    beta: 1.0e-2
+    hidden_units: 256
+    summary_freq: 2000
+    time_horizon: 64
+    num_layers: 2   
+----
 
     - If a brain called "WarehouseOneCrate_Learning_IL" was training, it would get its parameters from both of the above sets.
 
