@@ -5,7 +5,7 @@
 
 = AI problem-solving with Unity ML-Agents
 
-Paris Buttfield-Addison, Tim Nugent, Mars Geldard
+Paris Buttfield-Addison, Tim Nugent, Mars Geldard, Jon Manning
 
 image::images/idiotchild.jpg[]
 
